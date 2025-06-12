@@ -1,0 +1,127 @@
+footer {
+    background: linear-gradient(to right, #1a1a2e, #16213e);
+    color: var(--white);
+    padding: 4rem 6% 2.5rem;
+    text-align: center;
+    border-top: 4px solid var(--primary);
+}
+
+.footer-logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    margin-bottom: 1.2rem;
+    color: var(--primary);
+    letter-spacing: 1px;
+}
+
+.footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.footer-links a {
+    color: var(--white);
+    font-size: 1rem;
+    padding: 0.4rem 0.6rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: var(--white);
+    background-color: var(--primary);
+}
+
+.footer-socials {
+    display: flex;
+    justify-content: center;
+    gap: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.footer-socials a {
+    color: #eee;
+    background-color: rgba(255, 255, 255, 0.08);
+    padding: 0.5rem;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    transition: all 0.3s ease;
+}
+
+.footer-socials a:hover {
+    background-color: var(--primary);
+    color: var(--white);
+    transform: scale(1.1);
+}
+
+.footer-bottom {
+    font-size: 0.9rem;
+    color: #aaa;
+    margin-top: 1.5rem;
+}
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 2.5rem;
+    margin-top: 2.5rem;
+    text-align: left;
+    align-items: start;
+}
+
+.footer-col h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--white);
+    text-transform: uppercase;
+}
+
+.footer-col ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-col ul li {
+    margin-bottom: 0.6rem;
+}
+
+.footer-col ul li a {
+    color: #ccc;
+    font-size: 0.9rem;
+    transition: color 0.3s;
+}
+
+.footer-col ul li a:hover {
+    color: var(--primary);
+    text-decoration: underline;
+}
+
+.footer-content .logo {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.footer-content .logo-img {
+    width: 40px;
+    height: 40px;
+    margin-right: 0.8rem;
+}
+
+.footer-content .social-links {
+    margin-top: 0.8rem;
+}
+
+.footer-content .social-links a {
+    margin-right: 1rem;
+    font-size: 1.2rem;
+    color: #ccc;
+    transition: color 0.3s;
+}
+
+.footer-content .social-links a:hover {
+    color: var(--primary);
+}

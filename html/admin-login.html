@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Login - LogicalFetch</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f5f7fa;
+        }
+
+        .admin-login-box {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .admin-login-box h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: #4a4aff;
+        }
+
+        .admin-login-box input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 0.95rem;
+        }
+
+        .admin-login-box button {
+            width: 100%;
+            padding: 0.75rem;
+            background: #4a4aff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        .admin-login-box button:hover {
+            background: #3737e0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-login-box">
+        <h2>Admin Login</h2>
+        <form id="adminLoginForm" onsubmit="return handleAdminLogin(event)">
+            <label for="adminEmail">Email</label>
+            <input type="email" id="adminEmail" placeholder="admin@logicalfetch.in" required />
+
+            <label for="adminPassword">Password</label>
+            <input type="password" id="adminPassword" placeholder="Enter your password" required />
+
+            <button type="submit">Login</button>
+        </form>
+        <p style="text-align: center; margin-top: 1rem;">
+            <a href="index.html" style="color: #4a4aff; text-decoration: none;">← Back to Home</a>
+        </p>
+    </div>
+
+    <script>
+        function handleAdminLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+
+            // Demo check (replace this with real logic)
+            if (email === "admin@logicalfetch.in" && password === "admin123") {
+                alert("Login successful!");
+                window.location.href = "admin-dashboard.html"; // next step
+            } else {
+                alert("Invalid credentials. Try again.");
+            }
+        }
+    </script>
+</body>
+
+</html>

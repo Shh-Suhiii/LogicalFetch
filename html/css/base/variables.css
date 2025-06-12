@@ -1,0 +1,36 @@
+
+:root {
+    /* Colors */
+    --primary: #6c63ff;
+    --primary-dark: #554fd3;
+    --secondary: #3f3d56;
+    --accent: #ff6584;
+    --success: #28a745;
+    --danger: #dc3545;
+    --warning: #ffc107;
+    --info: #17a2b8;
+
+    --white: #ffffff;
+    --light: #f8f8f8;
+    --gray: #ccc;
+    --gray-light: #f0f0f0;
+    --gray-dark: #555;
+    --dark: #222;
+    --text: #333;
+
+    /* Typography */
+    --font-main: 'Poppins', sans-serif;
+
+    /* UI & Effects */
+    --transition: all 0.3s ease;
+    --radius: 8px;
+    --shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.15);
+
+    /* Spacing */
+    --space-xs: 0.5rem;
+    --space-sm: 1rem;
+    --space-md: 1.5rem;
+    --space-lg: 2rem;
+    --space-xl: 3rem;
+}

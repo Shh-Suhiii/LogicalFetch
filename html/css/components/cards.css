@@ -1,0 +1,67 @@
+/* Service Cards */
+.service-card {
+    background-color: var(--white);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    text-align: center;
+    transition: all 0.3s ease;
+    border: 1px solid #eee;
+}
+
+.service-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.1);
+}
+
+.service-card h3 {
+    margin-bottom: 1rem;
+    color: var(--primary);
+    font-size: 1.3rem;
+    font-weight: 600;
+}
+
+.service-card p {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Pricing Cards */
+.pricing-card {
+    background-color: var(--white);
+    padding: 3rem 2rem;
+    border-radius: var(--radius);
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #ddd;
+}
+
+.pricing-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.12);
+}
+
+.pricing-card .price {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 1.2rem 0;
+}
+
+/* Case Study Cards */
+.case-card {
+    background-color: var(--white);
+    padding: 2.5rem;
+    border-radius: var(--radius);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    border: 1px solid #f0f0f0;
+}
+
+.case-icon {
+    font-size: 2.4rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}

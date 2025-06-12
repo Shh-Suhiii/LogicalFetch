@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Contacts - LogicalFetch</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: linear-gradient(to right, #f5f7fa, #e4ecf7);
+        }
+
+        .contact-header {
+            background-color: #4a4aff;
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-bottom: 5rem;
+            position: relative;
+            z-index: 1;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+            letter-spacing: 1px;
+        }
+
+        .contact-list {
+            padding: 2rem;
+            display: grid;
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .contact-card {
+            background: #ffffff;
+            border-left: 6px solid #4a4aff;
+            padding: 2rem 2.25rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease-in-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 28px rgba(0, 0, 0, 0.15);
+        }
+
+        .delete-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background-color: transparent;
+            border: none;
+            color: #ff4b5c;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        .contact-card:hover .delete-btn {
+            display: block;
+        }
+
+        .delete-btn:hover {
+            color: #ff1f3d;
+        }
+
+        .contact-card h4 {
+            margin: 0 0 0.75rem;
+            color: #2b2b2b;
+            font-size: 1.2rem;
+        }
+
+        .contact-card p {
+            margin: 0.3rem 0;
+            font-size: 1rem;
+            color: #444;
+        }
+
+        .contact-card small {
+            color: #888;
+        }
+
+        @media (max-width: 600px) {
+            .contact-list {
+                padding: 1rem;
+            }
+
+            .contact-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="contact-header">
+        <h1>Manage Contact Requests</h1>
+    </header>
+
+    <div style="text-align: center; margin-bottom: 2rem;">
+        <a href="admin-dashboard.html" style="text-decoration: none;">
+            <button style="background-color: #4a4aff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;">
+                &larr; Back to Dashboard
+            </button>
+        </a>
+    </div>
+
+    <main class="contact-list">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <input type="text" placeholder="Search contacts..." style="flex: 1; padding: 0.6rem 1rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; max-width: 60%;">
+            <span style="margin-left: 1rem; font-size: 0.95rem; color: #555;">Total Contacts: 2</span>
+        </div>
+        <div style="margin-bottom: 2rem; background-color: #f0f8ff; padding: 1rem 1.5rem; border-radius: 10px; border-left: 5px solid #4a4aff;">
+            <h4 style="margin-top: 0; color: #2c3e50;">Contact Stats Overview</h4>
+            <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8; color: #333;">
+                <li>Total Contacts: 3</li>
+                <li>New This Week: 1</li>
+                <li>Pending Responses: 2</li>
+            </ul>
+        </div>
+        <!-- Demo entry -->
+        <div class="contact-card">
+            <h4>John Doe</h4>
+            <p><strong>Email:</strong> john@example.com</p>
+            <p><strong>Message:</strong> I’d like to know more about your services.</p>
+            <small>Submitted on: 2025-06-12</small>
+            <button class="delete-btn" title="Delete">&times;</button>
+        </div>
+        <div class="contact-card">
+            <h4>Jane Smith</h4>
+            <p><strong>Email:</strong> jane@example.com</p>
+            <p><strong>Message:</strong> Please contact me regarding a demo session.</p>
+            <small>Submitted on: 2025-06-11</small>
+            <button class="delete-btn" title="Delete">&times;</button>
+        </div>
+        <!-- Info Tip -->
+        <div style="background-color: #e9f2ff; border-left: 4px solid #4a4aff; padding: 1rem 1.25rem; border-radius: 8px; color: #333;">
+            Tip: You can delete contact requests by hovering over a card and clicking the × icon.
+        </div>
+
+        <!-- New Section: Recently Added Contact -->
+        <div style="background: #fff7e6; border-left: 5px solid #ffaa00; padding: 1.5rem 2rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-top: 2rem;">
+            <h4 style="margin-top: 0; color: #d35400;">New Contact Highlight</h4>
+            <p><strong>Email:</strong> newuser@demo.com</p>
+            <p><strong>Message:</strong> I just joined and would love to connect!</p>
+            <small>Submitted on: 2025-06-13</small>
+        </div>
+
+        <!-- Empty State (optional, can be toggled dynamically with JS later) -->
+        <!--
+        <div style="text-align: center; padding: 3rem 1rem; color: #777; font-style: italic;">
+            No contact requests found.
+        </div>
+        -->
+    </main>
+</body>
+
+</html>

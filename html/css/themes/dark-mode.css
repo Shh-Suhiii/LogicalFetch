@@ -1,0 +1,61 @@
+
+
+
+body.dark-mode {
+    background-color: #121212;
+    color: #f0f0f0;
+}
+
+body.dark-mode header {
+    background-color: #1f1f1f;
+    box-shadow: none;
+}
+
+body.dark-mode .navbar a {
+    color: #e0e0e0;
+}
+
+body.dark-mode .navbar a:hover {
+    color: var(--primary);
+}
+
+body.dark-mode .hero,
+body.dark-mode .services,
+body.dark-mode .pricing,
+body.dark-mode .clients,
+body.dark-mode .case-studies,
+body.dark-mode .faq,
+body.dark-mode .contact,
+body.dark-mode .newsletter {
+    background-color: #1a1a1a;
+}
+
+body.dark-mode .service-card,
+body.dark-mode .pricing-card,
+body.dark-mode .case-card,
+body.dark-mode .faq-item,
+body.dark-mode .contact-form,
+body.dark-mode .newsletter-form input {
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+    border-color: #444;
+}
+
+body.dark-mode .btn,
+body.dark-mode .btn-outline {
+    color: #fff;
+}
+
+body.dark-mode .btn-outline {
+    border-color: #ccc;
+}
+
+body.dark-mode footer {
+    background-color: #111;
+    color: #ccc;
+}
+
+body.dark-mode .footer-links a,
+body.dark-mode .footer-socials a {
+    color: #ccc;
+}

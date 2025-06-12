@@ -1,0 +1,142 @@
+
+
+
+.contact {
+    background: linear-gradient(135deg, #f5f7fa, #e8ecf3);
+    padding: 6rem 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 3rem;
+    align-items: flex-start;
+    text-align: center;
+}
+
+.contact h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary);
+    margin-bottom: 2rem;
+}
+
+.contact-form {
+    background-color: var(--light);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    text-align: left;
+    margin-top: 1rem;
+    transition: all 0.3s ease;
+}
+
+.contact-form:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+
+.contact-left {
+    flex: 1;
+    max-width: 500px;
+    order: 1;
+}
+
+
+.contact-right {
+    flex: 1;
+    max-width: 600px;
+    order: 2;
+}
+
+.contact-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.contact-form label {
+    margin-bottom: 0.3rem;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.contact-form input,
+.contact-form textarea {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--gray);
+    border-radius: var(--radius);
+    background-color: var(--white);
+    color: var(--text);
+    font-size: 1rem;
+    transition: var(--transition);
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    background-color: #fefefe;
+    box-shadow: 0 0 0 3px rgba(100, 108, 255, 0.2);
+}
+
+.contact-form textarea {
+    min-height: 140px;
+    resize: vertical;
+}
+
+.contact-form .btn {
+    align-self: flex-start;
+}
+
+
+.contact h3 {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+}
+
+.contact p {
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 1.2rem;
+}
+
+.contact .contact-details {
+    margin: 0;
+    text-align: left;
+}
+
+.contact .contact-details .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+}
+
+.contact .contact-details .detail-item i {
+    font-size: 1.5rem;
+    color: var(--primary);
+    margin-right: 0.75rem;
+    margin-bottom: 0.5rem;
+}
+
+.contact .contact-details .detail-item h4 {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 0.3rem;
+}
+
+.contact .contact-details .detail-item span {
+    color: var(--gray-dark);
+}
+@media (max-width: 768px) {
+    .contact {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+}

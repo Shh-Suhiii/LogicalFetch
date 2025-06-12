@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Settings | LogicalFetch</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #e3f2fd, #fce4ec);
+      padding: 20px;
+    }
+    .settings-container {
+      max-width: 800px;
+      margin: auto;
+      background: white;
+      padding: 2rem 3rem;
+      border-radius: 15px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+    }
+    h2 {
+      color: #2c3e50;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .setting-group {
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #333;
+      font-weight: 600;
+    }
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #bbb;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border 0.3s ease;
+    }
+    input:focus, select:focus {
+      border-color: #4a4aff;
+      outline: none;
+    }
+    .save-btn {
+      background: linear-gradient(90deg, #4a4aff, #3c3cff);
+      color: white;
+      padding: 0.9rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .save-btn:hover {
+      background: linear-gradient(90deg, #3c3cff, #4a4aff);
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <h2><span style="color:#4a4aff;"><i class="fas fa-cog fa-spin"></i></span> Admin Settings</h2>
+
+    <div class="setting-group">
+      <label for="admin-name">Admin Name</label>
+      <input type="text" id="admin-name" placeholder="Enter your name" />
+    </div>
+
+    <div class="setting-group">
+      <label for="email">Email Address</label>
+      <input type="email" id="email" placeholder="admin@example.com" />
+    </div>
+
+    <div class="setting-group">
+      <label for="password">Change Password</label>
+      <input type="password" id="password" placeholder="New password" />
+    </div>
+
+    <div class="setting-group">
+      <label for="theme">Theme Preference</label>
+      <select id="theme">
+        <option value="light">Light Mode</option>
+        <option value="dark">Dark Mode</option>
+      </select>
+    </div>
+
+    <button class="save-btn"><i class="fas fa-save"></i> Save Settings</button>
+  </div>
+</body>
+</html>

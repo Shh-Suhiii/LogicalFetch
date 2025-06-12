@@ -1,0 +1,22 @@
+.testimonials {
+    padding: 4rem 1rem;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+
+.testimonials .swiper {
+    width: 100%;
+    max-width: 700px;
+    margin: 2rem auto;
+}
+
+.swiper-slide {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.swiper-pagination-bullet {
+    background: #333;
+}

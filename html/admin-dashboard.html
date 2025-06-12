@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — LogicalFetch</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f6fb;
+    }
+
+    .sidebar {
+      width: 220px;
+      background-color: #2e2e2e;
+      color: #fff;
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      padding: 20px 0;
+      z-index: 100;
+    }
+
+    @media (max-width: 768px) {
+      .sidebar ul li {
+        text-align: center;
+      }
+
+      .sidebar ul li a {
+        justify-content: center;
+      }
+    }
+
+    .sidebar h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .sidebar ul li {
+      padding: 10px 20px;
+    }
+
+    .sidebar ul li a {
+      color: #fff;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+    }
+
+    .sidebar ul li a:hover {
+      background-color: #444;
+    }
+
+    .nav-label {
+      margin-left: 10px;
+    }
+
+    .main-container {
+      margin-left: 220px;
+      padding: 20px;
+    }
+
+    .dashboard-header {
+      background: linear-gradient(to right, #4a4aff, #6a6aff);
+      color: white;
+      padding: 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 10px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .logout-btn {
+      background-color: white;
+      color: #4a4aff;
+      border: 2px solid #4a4aff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #4a4aff;
+      color: white;
+    }
+
+    .dashboard-content {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .dashboard-card {
+      background-color: #fff;
+      padding: 24px;
+      border-radius: 10px;
+      box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      color: #000;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .dashboard-card h3 {
+      font-size: 18px;
+      margin-top: 0;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    .dashboard-card .icon {
+      font-size: 20px;
+      margin-right: 10px;
+      color: #4a4aff;
+    }
+
+    .dashboard-card p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .hamburger-menu {
+      display: none;
+      cursor: pointer;
+      padding: 10px 20px;
+      font-size: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .hamburger-menu {
+        display: block;
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        z-index: 101;
+        background-color: #fff;
+        padding: 8px;
+        border-radius: 4px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      }
+
+      .sidebar {
+        width: 220px;
+        position: absolute;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 100;
+      }
+
+      .sidebar.active {
+        transform: translateX(0);
+      }
+
+      .main-container {
+        margin-left: 0;
+        padding-top: 20px;
+      }
+
+      .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        width: 100%;
+      }
+
+      .dashboard-header h1 {
+        font-size: 20px;
+      }
+
+      .dashboard-card {
+        width: 100%;
+      }
+
+      .dashboard-card h3 {
+        font-size: 16px;
+      }
+
+      .dashboard-card p {
+        font-size: 13px;
+      }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div class="hamburger-menu" onclick="toggleSidebarMobile()">
+      <i class="fas fa-bars"></i>
+    </div>
+    <h2>Admin Menu</h2>
+    <ul>
+      <li><a href="update-services.html" title="Services"><i class="fas fa-tools"></i><span class="nav-label">Services</span></a></li>
+      <li><a href="update-faqs.html" title="FAQs"><i class="fas fa-question-circle"></i><span class="nav-label">FAQs</span></a></li>
+      <li><a href="manage-pricing.html" title="Pricing"><i class="fas fa-tags"></i><span class="nav-label">Pricing</span></a></li>
+      <li><a href="upload-demos.html" title="Demos"><i class="fas fa-image"></i><span class="nav-label">Demos</span></a></li>
+      <li><a href="manage-contacts.html" title="Contacts"><i class="fas fa-envelope-open-text"></i><span class="nav-label">Contacts</span></a></li>
+    </ul>
+  </aside>
+
+  <div class="main-container">
+    <header class="dashboard-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="../images/admin-avatar.png" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%;">
+        <h1 style="margin: 0;">Welcome, Admin</h1>
+      </div>
+      <a href="index.html" class="logout-btn" style="text-decoration: none;">Logout</a>
+    </header>
+
+    <main class="dashboard-content">
+      <a href="update-services.html" class="dashboard-card">
+        <h3><span class="icon"><i class="fas fa-tools"></i></span> Update Services</h3>
+        <p>Modify the services listed on the homepage.</p>
+      </a>
+      <a href="update-faqs.html" class="dashboard-card">
+        <h3><span class="icon"><i class="fas fa-question-circle"></i></span> Update FAQs</h3>
+        <p>Add or remove FAQ entries shown to users.</p>
+      </a>
+      <a href="manage-pricing.html" class="dashboard-card">
+        <h3><span class="icon"><i class="fas fa-tags"></i></span> Manage Pricing Plans</h3>
+        <p>Edit available plans and their features.</p>
+      </a>
+      <a href="upload-demos.html" class="dashboard-card">
+        <h3><span class="icon"><i class="fas fa-image"></i></span> Upload Demo Projects</h3>
+        <p>Showcase sample screenshots of past work.</p>
+      </a>
+      <a href="manage-contacts.html" class="dashboard-card">
+        <h3><span class="icon"><i class="fas fa-envelope-open-text"></i></span> Manage Contact Requests</h3>
+        <p>View and respond to user-submitted contact forms.</p>
+      </a>
+
+      <div class="dashboard-card" style="background: #f0f6ff; border-left: 5px solid #4a4aff;">
+        <h3><i class="fas fa-chart-line"></i> Quick Stats</h3>
+        <p>Total Projects: <strong style="color:#4a4aff;">12</strong></p>
+        <p>Active Clients: <strong style="color:#4a4aff;">8</strong></p>
+        <p>Messages Received: <strong style="color:#4a4aff;">35</strong></p>
+      </div>
+      <div class="dashboard-card" style="background: #fff8e1; border-left: 5px solid #ffc107;">
+        <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
+        <p><strong>12 Jun 2025:</strong> Maintenance scheduled at 11 PM.</p>
+        <p><strong>10 Jun 2025:</strong> New pricing plans now live.</p>
+      </div>
+      <div class="dashboard-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
+        <h3><i class="fas fa-lightbulb"></i> Tips & Tricks</h3>
+        <p>Keep your FAQ section updated to reduce repeated inquiries.</p>
+        <p>Use demo screenshots to highlight your best work.</p>
+      </div>
+      <div class="dashboard-card" style="background: #fefefe; border-left: 5px solid #9c27b0;">
+        <h3><i class="fas fa-history"></i> Recent Activities</h3>
+        <p><strong>Admin</strong> updated pricing plans - <em>2 hrs ago</em></p>
+        <p><strong>Admin</strong> added a new demo project - <em>1 day ago</em></p>
+      </div>
+
+      <a href="settings.html" class="dashboard-card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
+        <h3><span class="icon"><i class="fas fa-cog"></i></span> Admin Settings</h3>
+        <p>Configure your preferences and account settings.</p>
+      </a>
+    </main>
+  </div>
+
+  <script>
+    function toggleSidebarMobile() {
+      const sidebar = document.querySelector('.sidebar');
+      sidebar.classList.toggle('active');
+
+      // Also close when clicking outside the sidebar
+      document.addEventListener('click', function (e) {
+        if (!sidebar.contains(e.target) && !e.target.closest('.hamburger-menu')) {
+          sidebar.classList.remove('active');
+        }
+      }, { once: true });
+    }
+
+    window.addEventListener('resize', () => {
+      const sidebar = document.querySelector('.sidebar');
+      if (window.innerWidth > 768) {
+        sidebar.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

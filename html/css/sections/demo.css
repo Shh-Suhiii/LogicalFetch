@@ -1,0 +1,53 @@
+.demo-projects {
+    padding: 5rem 2rem;
+    background: linear-gradient(135deg, #f9f9ff, #eef1f9);
+    text-align: center;
+}
+
+.demo-projects .section-title h2 {
+    font-size: 2.75rem;
+    margin-bottom: 0.75rem;
+    color: #333;
+}
+
+.demo-projects .section-title p {
+    color: #555;
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+}
+
+.demo-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+}
+
+.demo-item {
+    background: #fff;
+    border-radius: 14px;
+    padding: 1.5rem 1.2rem;
+    max-width: 320px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
+
+.demo-item img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+}
+
+.demo-item h3 {
+    font-size: 1.2rem;
+    color: #111;
+    margin-top: 0.5rem;
+}
+
+.demo-item:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}

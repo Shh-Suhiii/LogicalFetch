@@ -1,0 +1,55 @@
+.case-studies {
+    background-color: var(--light);
+    padding: 4rem 1.5rem;
+    text-align: center;
+    background-image: url('/images/hero-bg.svg');
+    background-size: cover;
+    background-position: center;
+}
+
+.case-studies h2 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: var(--primary);
+}
+
+.case-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.case-card {
+    background-color: var(--white);
+    padding: 2.5rem 2rem;
+    border-radius: var(--radius);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+}
+
+.case-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+}
+
+.case-icon {
+    font-size: 2.5rem;
+    color: var(--primary);
+    margin-bottom: 1.2rem;
+}
+
+.case-content h3 {
+    font-size: 1.4rem;
+    color: var(--primary);
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.case-content p {
+    font-size: 0.95rem;
+    color: var(--text);
+    line-height: 1.6;
+}

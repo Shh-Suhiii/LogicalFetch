@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update Services - LogicalFetch</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: linear-gradient(to bottom right, #e3f2fd, #fce4ec);
+        }
+
+        .services-header {
+            background: linear-gradient(to right, #4a4aff, #6c63ff);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 600;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .services-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem 1rem 3rem;
+        }
+
+        .service-item {
+            background-color: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.07);
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            border-left: 5px solid #4a4aff;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .service-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-item h4 {
+            margin: 0 0 0.5rem 0;
+            color: #222;
+            font-size: 1.2rem;
+        }
+
+        .service-item p {
+            margin: 0;
+            color: #555;
+            font-size: 1rem;
+        }
+
+        .actions {
+            margin-top: 1rem;
+        }
+
+        .actions button {
+            padding: 0.6rem 1.4rem;
+            margin-right: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .actions button:hover {
+            transform: scale(1.05);
+        }
+
+        .edit-btn {
+            background-color: #4a4aff;
+            color: white;
+        }
+
+        .edit-btn::before {
+            content: "✏️";
+        }
+
+        .delete-btn {
+            background-color: #ff5252;
+            color: white;
+        }
+
+        .delete-btn::before {
+            content: "🗑️";
+        }
+
+        .add-service-form {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            animation: fadeInUp 0.5s ease-in-out;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .add-service-form h3 {
+            margin-top: 0;
+            color: #222;
+            font-size: 1.4rem;
+        }
+
+        .add-service-form input,
+        .add-service-form textarea {
+            width: 100%;
+            padding: 0.9rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .add-service-form input:focus,
+        .add-service-form textarea:focus {
+            border-color: #4a4aff;
+            outline: none;
+        }
+
+        .add-service-form button {
+            width: 100%;
+            padding: 1rem;
+            background-color: #4a4aff;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s ease, transform 0.2s ease;
+        }
+
+        .add-service-form button:hover {
+            background-color: #3c3cff;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .services-container {
+                padding: 0.5rem;
+            }
+
+            .service-item {
+                padding: 1rem;
+            }
+
+            .add-service-form {
+                padding: 1.5rem;
+            }
+
+            .actions button {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .actions {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .actions button {
+                margin-bottom: 0.5rem;
+                width: 100%;
+            }
+        }
+        @media (max-width: 480px) {
+            .services-header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="services-header">
+        <h1>Update Services</h1>
+    </header>
+
+    <main class="services-container">
+        <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+            <a href="demo-projects.html" style="text-decoration: none;">
+                <button style="
+                    background-color: #5e35b1;
+                    color: white;
+                    padding: 0.7rem 1.5rem;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background 0.3s ease;
+                " onmouseover="this.style.backgroundColor='#4527a0'" onmouseout="this.style.backgroundColor='#5e35b1'">
+                    🖼️ View Demo Projects
+                </button>
+            </a>
+            <a href="admin-dashboard.html" style="text-decoration: none;">
+                <button style="
+                    background-color: #4a4aff;
+                    color: white;
+                    padding: 0.7rem 1.5rem;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background 0.3s ease;
+                " onmouseover="this.style.backgroundColor='#3c3cff'" onmouseout="this.style.backgroundColor='#4a4aff'">
+                    ← Back to Dashboard
+                </button>
+            </a>
+            <a href="index.html" style="text-decoration: none;">
+                <button style="
+                    background-color: #00897b;
+                    color: white;
+                    padding: 0.7rem 1.5rem;
+                    border: none;
+                    border-radius: 6px;
+                    font-size: 1rem;
+                    font-weight: 500;
+                    cursor: pointer;
+                    transition: background 0.3s ease;
+                " onmouseover="this.style.backgroundColor='#00796b'" onmouseout="this.style.backgroundColor='#00897b'">
+                    ⬅ Back to Home
+                </button>
+            </a>
+        </div>
+        <section class="recent-updates" style="margin-top: 2rem;">
+            <h2 style="font-size: 1.5rem; color: #333; margin-bottom: 1rem;">Recent Service Updates</h2>
+            <ul style="list-style: none; padding-left: 0;">
+                <li style="padding: 0.75rem 1rem; background: #f1f5ff; margin-bottom: 0.5rem; border-left: 4px solid #4a4aff; border-radius: 6px;">
+                    📅 Custom App Development updated on 12 June 2025
+                </li>
+                <li style="padding: 0.75rem 1rem; background: #f1f5ff; margin-bottom: 0.5rem; border-left: 4px solid #4a4aff; border-radius: 6px;">
+                    🖥️ Website Design refreshed UI on 10 June 2025
+                </li>
+            </ul>
+        </section>
+        <div class="service-item">
+            <h4>Custom App Development</h4>
+            <p>We create tailor-made apps for your institution, fully aligned with your vision and branding.</p>
+            <div class="actions">
+                <button class="edit-btn">Edit</button>
+                <button class="delete-btn">Delete</button>
+            </div>
+        </div>
+
+        <div class="service-item">
+            <h4>Website Design</h4>
+            <p>Responsive, user-friendly websites built to attract and retain users effectively.</p>
+            <div class="actions">
+                <button class="edit-btn">Edit</button>
+                <button class="delete-btn">Delete</button>
+            </div>
+        </div>
+
+        <div class="add-service-form">
+            <h3>Add New Service</h3>
+            <form>
+                <input type="text" placeholder="Service Title" required />
+                <textarea placeholder="Service Description" required></textarea>
+                <button type="submit">Add Service</button>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>

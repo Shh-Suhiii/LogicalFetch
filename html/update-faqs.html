@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Update FAQs - LogicalFetch</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: #f5f7fa;
+        }
+
+        .faqs-header {
+            background-color: #4a4aff;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .faqs-header {
+            background: linear-gradient(90deg, #4a4aff, #6a6aff);
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 0 0 20px 20px;
+        }
+
+        .faqs-header h1 {
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .faqs-container {
+            padding: 2rem;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .faq-item {
+            background: white;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .faq-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-item h4 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .faq-item p {
+            color: #555;
+            margin-bottom: 0.75rem;
+        }
+
+        .faq-item .actions {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .faq-item button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.2s;
+        }
+
+        .edit-btn {
+            background-color: #4a4aff;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #ff4a4a;
+            color: white;
+        }
+
+        .add-faq-form {
+            background: white;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .add-faq-form input,
+        .add-faq-form textarea {
+            width: 100%;
+            padding: 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .add-faq-form button {
+            padding: 0.75rem 1.5rem;
+            background: #00c853;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .add-faq-form button:hover {
+            background: #009624;
+        }
+
+        .edit-btn:hover {
+            background-color: #3737e6;
+        }
+
+        .delete-btn:hover {
+            background-color: #e63b3b;
+        }
+
+        a:hover {
+            background-color: #3737e6;
+        }
+        .add-faq-form h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+    </style>
+</head>
+
+<body>
+    <header class="faqs-header" style="background: linear-gradient(90deg, #4a4aff, #6a6aff); color: white; padding: 2.5rem; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 0 0 20px 20px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 1rem;">
+            <img src="../images/faq-icon.svg" alt="FAQ Icon" style="width: 40px; height: 40px;">
+            <h1 style="font-size: 2.5rem; margin: 0;">Update FAQs</h1>
+        </div>
+    </header>
+
+    <div style="text-align: center; margin-top: 1rem;">
+        <a href="admin-dashboard.html" style="display: inline-block; background: #4a4aff; color: white; padding: 0.6rem 1.2rem; border-radius: 5px; text-decoration: none; box-shadow: 0 2px 6px rgba(0,0,0,0.1);">
+            ← Back to Dashboard
+        </a>
+    </div>
+
+    <main class="faqs-container" style="margin-top: 2rem;">
+        <h2 style="margin-bottom: 1.5rem; color: #222;">Existing FAQs</h2>
+        <div class="faq-item">
+            <h4>What is LogicalFetch?</h4>
+            <p>LogicalFetch is a platform that builds smart digital solutions for institutions.</p>
+            <div class="actions">
+                <button class="edit-btn">✏️ Edit</button>
+                <button class="delete-btn">🗑️ Delete</button>
+            </div>
+        </div>
+        <div class="faq-item">
+            <h4>Can I get a custom app for my tuition center?</h4>
+            <p>Yes, we create customized apps tailored to your academic needs.</p>
+            <div class="actions">
+                <button class="edit-btn">✏️ Edit</button>
+                <button class="delete-btn">🗑️ Delete</button>
+            </div>
+        </div>
+
+        <div class="add-faq-form" style="animation: fadeInUp 0.6s ease-out;">
+            <h3>Add New FAQ</h3>
+            <form>
+                <input type="text" placeholder="Enter Question" required />
+                <textarea placeholder="Enter Answer" rows="4" required></textarea>
+                <button type="submit">Add FAQ</button>
+            </form>
+        </div>
+    </main>
+</body>
+
+</html>
