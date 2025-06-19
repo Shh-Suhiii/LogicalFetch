@@ -21,6 +21,9 @@
             font-weight: 600;
             border-radius: 0 0 16px 16px;
             box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .services-container {
@@ -203,22 +206,10 @@
     </header>
 
     <main class="services-container">
-        <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap;">
-            <a href="demo-projects.html" style="text-decoration: none;">
-                <button style="
-                    background-color: #5e35b1;
-                    color: white;
-                    padding: 0.7rem 1.5rem;
-                    border: none;
-                    border-radius: 6px;
-                    font-size: 1rem;
-                    font-weight: 500;
-                    cursor: pointer;
-                    transition: background 0.3s ease;
-                " onmouseover="this.style.backgroundColor='#4527a0'" onmouseout="this.style.backgroundColor='#5e35b1'">
-                    🖼️ View Demo Projects
-                </button>
-            </a>
+        <div style="margin-bottom: 1.5rem;">
+            <input type="text" id="searchInput" placeholder="🔍 Search services..." style="width: 100%; padding: 0.8rem; font-size: 1rem; border-radius: 6px; border: 1px solid #ccc;" />
+        </div>
+        <div style="margin-bottom: 1.5rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
             <a href="admin-dashboard.html" style="text-decoration: none;">
                 <button style="
                     background-color: #4a4aff;
@@ -249,18 +240,20 @@
                     ⬅ Back to Home
                 </button>
             </a>
+            <section class="recent-updates" style="margin-top: 0;">
+                <button onclick="toggleUpdates()" style="
+                    font-size: 1.2rem;
+                    color: white;
+                    background-color: #4a4aff;
+                    border: none;
+                    border-radius: 6px;
+                    padding: 0.6rem 1.2rem;
+                    cursor: pointer;
+                    margin-bottom: 1rem;
+                ">📋 Recent Service Updates ⯆</button>
+                <ul id="recent-updates-list" style="list-style: none; padding-left: 0; display: none;"></ul>
+            </section>
         </div>
-        <section class="recent-updates" style="margin-top: 2rem;">
-            <h2 style="font-size: 1.5rem; color: #333; margin-bottom: 1rem;">Recent Service Updates</h2>
-            <ul style="list-style: none; padding-left: 0;">
-                <li style="padding: 0.75rem 1rem; background: #f1f5ff; margin-bottom: 0.5rem; border-left: 4px solid #4a4aff; border-radius: 6px;">
-                    📅 Custom App Development updated on 12 June 2025
-                </li>
-                <li style="padding: 0.75rem 1rem; background: #f1f5ff; margin-bottom: 0.5rem; border-left: 4px solid #4a4aff; border-radius: 6px;">
-                    🖥️ Website Design refreshed UI on 10 June 2025
-                </li>
-            </ul>
-        </section>
         <div class="service-item">
             <h4>Custom App Development</h4>
             <p>We create tailor-made apps for your institution, fully aligned with your vision and branding.</p>
@@ -279,15 +272,213 @@
             </div>
         </div>
 
+        <div id="services-loader"></div>
         <div class="add-service-form">
             <h3>Add New Service</h3>
             <form>
                 <input type="text" placeholder="Service Title" required />
                 <textarea placeholder="Service Description" required></textarea>
                 <button type="submit">Add Service</button>
+                <div id="form-feedback" style="margin-top: 1rem; font-size: 0.95rem;"></div>
             </form>
+            <div id="form-error"></div>
         </div>
     </main>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+      authDomain: "logicalfetch-138a8.firebaseapp.com",
+      projectId: "logicalfetch-138a8",
+      storageBucket: "logicalfetch-138a8.appspot.com",
+      messagingSenderId: "352479441148",
+      appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+      measurementId: "G-Z66R8XS5SW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const serviceContainer = document.querySelector(".services-container");
+    const form = document.querySelector("form");
+    const inputTitle = form.querySelector("input");
+    const inputDesc = form.querySelector("textarea");
+    const errorDiv = document.getElementById("form-error");
+
+    let allServices = []; // Store all fetched services
+
+    async function fetchServices() {
+      // Loader at the top
+      const loader = document.getElementById("services-loader");
+      if (loader) {
+        loader.textContent = "Loading services...";
+        loader.style = "text-align:center; color:#888;";
+      }
+      // Remove all service-item elements except the form
+      document.querySelectorAll(".service-item").forEach(el => el.remove());
+      const querySnapshot = await getDocs(collection(db, "services"));
+      // Remove loader after loading
+      if (loader) loader.remove();
+      // Handle empty state
+      if (querySnapshot.empty) {
+        const message = document.createElement("p");
+        message.textContent = "No services added yet.";
+        message.style = "text-align:center; color:#666; font-style:italic;";
+        serviceContainer.insertBefore(message, document.querySelector(".add-service-form"));
+        return;
+      }
+      allServices = [];
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        allServices.push({ id: docSnap.id, ...data });
+        const serviceItem = document.createElement("div");
+        serviceItem.className = "service-item";
+        serviceItem.innerHTML = `
+          <h4>💼 ${data.title}</h4>
+          <p>${data.description}</p>
+          <div class="actions">
+            <button class="edit-btn" data-id="${docSnap.id}">Edit</button>
+            <button class="delete-btn" data-id="${docSnap.id}">Delete</button>
+          </div>
+        `;
+        // Insert before the form's parent (.add-service-form)
+        serviceContainer.insertBefore(serviceItem, document.querySelector(".add-service-form"));
+      });
+    }
+
+    fetchServices();
+
+    document.getElementById("searchInput").addEventListener("input", (e) => {
+      const term = e.target.value.toLowerCase();
+      document.querySelectorAll(".service-item").forEach(item => item.remove());
+      const filtered = allServices.filter(service => service.title.toLowerCase().includes(term) || service.description.toLowerCase().includes(term));
+      if (filtered.length === 0) {
+        const noMatch = document.createElement("p");
+        noMatch.textContent = "No matching services found.";
+        noMatch.style = "text-align:center; color:#888; font-style:italic;";
+        serviceContainer.insertBefore(noMatch, document.querySelector(".add-service-form"));
+      } else {
+        filtered.forEach(service => {
+          const serviceItem = document.createElement("div");
+          serviceItem.className = "service-item";
+          serviceItem.innerHTML = `
+            <h4>💼 ${service.title}</h4>
+            <p>${service.description}</p>
+            <div class="actions">
+              <button class="edit-btn" data-id="${service.id}">Edit</button>
+              <button class="delete-btn" data-id="${service.id}">Delete</button>
+            </div>
+          `;
+          serviceContainer.insertBefore(serviceItem, document.querySelector(".add-service-form"));
+        });
+      }
+    });
+
+    async function fetchRecentUpdates() {
+      const list = document.getElementById("recent-updates-list");
+      // Loader for updates
+      const loading = document.createElement("p");
+      loading.textContent = "Loading services...";
+      loading.style = "text-align:center; color:#888;";
+      list.parentNode.insertBefore(loading, list);
+      list.innerHTML = ""; // Clear previous entries
+      const querySnapshot = await getDocs(collection(db, "services"));
+      // Remove loader after loading
+      loading.remove();
+      querySnapshot.forEach((docSnap) => {
+        const data = docSnap.data();
+        const timestamp = data.timestamp?.toDate?.() || new Date(); // Use Firestore timestamp if available
+        const formattedDate = timestamp.toLocaleString("en-US", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit"
+        });
+        const item = document.createElement("li");
+        item.style = "padding: 0.75rem 1rem; background: #f1f5ff; margin-bottom: 0.5rem; border-left: 4px solid #4a4aff; border-radius: 6px;";
+        item.textContent = `🛠️ ${data.title} added or updated on ${formattedDate}`;
+        list.appendChild(item);
+      });
+    }
+
+    fetchRecentUpdates();
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      errorDiv.textContent = "";
+      const feedback = document.getElementById("form-feedback");
+      feedback.textContent = "";
+      feedback.style.color = "";
+      const title = inputTitle.value.trim();
+      const description = inputDesc.value.trim();
+      if (!title || !description) {
+        errorDiv.textContent = "Please fill in all fields.";
+        errorDiv.style = "color: red; margin-bottom: 1rem;";
+        feedback.textContent = "Error: Please complete all fields.";
+        feedback.style.color = "red";
+        return;
+      }
+      // Add new service and highlight addition
+      await addDoc(collection(db, "services"), {
+        title,
+        description,
+        timestamp: new Date()
+      });
+      // Highlight the new addition before reload
+      const newItem = document.createElement("div");
+      newItem.className = "service-item";
+      newItem.style = "background-color: #e8f5e9; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.2); border-left: 5px solid #66bb6a; transition: all 0.3s ease;";
+      newItem.innerHTML = `<h4>💼 ${title}</h4><p>${description}</p>`;
+      serviceContainer.insertBefore(newItem, document.querySelector(".add-service-form"));
+      feedback.textContent = "✅ Service added successfully!";
+      feedback.style.color = "green";
+      setTimeout(() => location.reload(), 3000);
+      return;
+    });
+
+    document.addEventListener("click", async (e) => {
+      // Delete logic with confirmation dialog
+      if (e.target.classList.contains("delete-btn")) {
+        const confirmDelete = confirm("Are you sure you want to delete this service?");
+        if (confirmDelete) {
+          const id = e.target.dataset.id;
+          await deleteDoc(doc(db, "services", id));
+          location.reload();
+        }
+      }
+
+      if (e.target.classList.contains("edit-btn")) {
+        const id = e.target.dataset.id;
+        const newTitle = prompt("Enter new title:");
+        const newDesc = prompt("Enter new description:");
+        if (newTitle && newDesc) {
+          await updateDoc(doc(db, "services", id), {
+            title: newTitle,
+            description: newDesc
+          });
+          location.reload();
+        }
+      }
+    });
+
+    // Toggle function for recent updates dropdown
+    window.toggleUpdates = function () {
+      const list = document.getElementById("recent-updates-list");
+      list.style.display = list.style.display === "none" ? "block" : "none";
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener("click", function(event) {
+      const dropdown = document.getElementById("recent-updates-list");
+      const button = document.querySelector(".recent-updates button");
+      if (!button.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.style.display = "none";
+      }
+    });
+  </script>
 </body>
 
 </html>

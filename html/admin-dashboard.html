@@ -222,7 +222,7 @@
         <img src="../images/admin-avatar.png" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%;">
         <h1 style="margin: 0;">Welcome, Admin</h1>
       </div>
-      <a href="index.html" class="logout-btn" style="text-decoration: none;">Logout</a>
+      <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
 
     <main class="dashboard-content">
@@ -249,9 +249,9 @@
 
       <div class="dashboard-card" style="background: #f0f6ff; border-left: 5px solid #4a4aff;">
         <h3><i class="fas fa-chart-line"></i> Quick Stats</h3>
-        <p>Total Projects: <strong style="color:#4a4aff;">12</strong></p>
-        <p>Active Clients: <strong style="color:#4a4aff;">8</strong></p>
-        <p>Messages Received: <strong style="color:#4a4aff;">35</strong></p>
+        <p>Total Projects: <strong id="totalProjects" style="color:#4a4aff;">—</strong></p>
+        <p>Active Clients: <strong id="activeClients" style="color:#4a4aff;">—</strong></p>
+        <p>Messages Received: <strong id="messagesReceived" style="color:#4a4aff;">—</strong></p>
       </div>
       <div class="dashboard-card" style="background: #fff8e1; border-left: 5px solid #ffc107;">
         <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
@@ -273,28 +273,85 @@
         <h3><span class="icon"><i class="fas fa-cog"></i></span> Admin Settings</h3>
         <p>Configure your preferences and account settings.</p>
       </a>
+
+      <a href="edit-index.html" class="dashboard-card" style="background: #fff3e0; border-left: 5px solid #ff9800;">
+        <h3><span class="icon"><i class="fas fa-file-alt"></i></span> Edit Homepage</h3>
+        <p>Modify content sections of the main index.html site.</p>
+      </a>
     </main>
   </div>
 
-  <script>
-    function toggleSidebarMobile() {
-      const sidebar = document.querySelector('.sidebar');
-      sidebar.classList.toggle('active');
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
-      // Also close when clicking outside the sidebar
-      document.addEventListener('click', function (e) {
-        if (!sidebar.contains(e.target) && !e.target.closest('.hamburger-menu')) {
-          sidebar.classList.remove('active');
-        }
-      }, { once: true });
+  const firebaseConfig = {
+    apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+    authDomain: "logicalfetch-138a8.firebaseapp.com",
+    projectId: "logicalfetch-138a8",
+    storageBucket: "logicalfetch-138a8.appspot.com",
+    messagingSenderId: "352479441148",
+    appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+    measurementId: "G-Z66R8XS5SW"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+  const db = getFirestore(app);
+
+  async function fetchStats() {
+    const demosSnap = await getDocs(collection(db, "demos"));
+    const contactsSnap = await getDocs(collection(db, "contacts"));
+
+    document.getElementById("totalProjects").textContent = demosSnap.size;
+    document.getElementById("messagesReceived").textContent = contactsSnap.size;
+    document.getElementById("activeClients").textContent = contactsSnap.size;
+  }
+
+  fetchStats();
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      window.location.href = "login.html";
     }
+  });
 
-    window.addEventListener('resize', () => {
-      const sidebar = document.querySelector('.sidebar');
-      if (window.innerWidth > 768) {
+  window.logout = function () {
+    signOut(auth).then(() => {
+      window.location.href = "login.html";
+    });
+  };
+
+  function toggleSidebarMobile() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('active');
+
+    document.addEventListener('click', function (e) {
+      if (!sidebar.contains(e.target) && !e.target.closest('.hamburger-menu')) {
         sidebar.classList.remove('active');
       }
-    });
-  </script>
+    }, { once: true });
+  }
+
+  window.addEventListener('resize', () => {
+    const sidebar = document.querySelector('.sidebar');
+    if (window.innerWidth > 768) {
+      sidebar.classList.remove('active');
+    }
+  });
+
+  // Special redirection logic for edit homepage
+  document.querySelectorAll('.dashboard-card').forEach(card => {
+    if (card.querySelector('h3')?.innerText.includes("Edit Homepage")) {
+      card.addEventListener('click', function (e) {
+        e.preventDefault();
+        window.location.href = "edit-index.html";
+      });
+    }
+  });
+</script>
 </body>
 </html>

@@ -74,20 +74,38 @@
         </p>
     </div>
 
-    <script>
-        function handleAdminLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('adminEmail').value;
-            const password = document.getElementById('adminPassword').value;
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 
-            // Demo check (replace this with real logic)
-            if (email === "admin@logicalfetch.in" && password === "admin123") {
-                alert("Login successful!");
-                window.location.href = "admin-dashboard.html"; // next step
-            } else {
-                alert("Invalid credentials. Try again.");
-            }
-        }
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+        authDomain: "logicalfetch-138a8.firebaseapp.com",
+        projectId: "logicalfetch-138a8",
+        storageBucket: "logicalfetch-138a8.appspot.com",
+        messagingSenderId: "352479441148",
+        appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+        measurementId: "G-Z66R8XS5SW"
+      };
+
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      function handleAdminLogin(e) {
+        e.preventDefault();
+        const email = document.getElementById('adminEmail').value;
+        const password = document.getElementById('adminPassword').value;
+
+        auth.signInWithEmailAndPassword(email, password)
+          .then((userCredential) => {
+            alert("Login successful!");
+            window.location.href = "admin-dashboard.html";
+          })
+          .catch((error) => {
+            alert("Login failed: " + error.message);
+          });
+      }
     </script>
 </body>
 

@@ -28,6 +28,7 @@
       padding: 1.5rem;
       border-radius: 8px;
       margin-bottom: 2rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
     }
 
     .admin-header h1 {
@@ -47,6 +48,27 @@
       background-color: rgba(255,255,255,0.2);
     }
 
+    .filter-sort-bar {
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .filter-sort-bar input {
+      padding: 0.5rem;
+      width: 60%;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .filter-sort-bar select {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
     .pricing-management {
       display: flex;
       flex-wrap: wrap;
@@ -60,6 +82,15 @@
       padding: 1.5rem;
       border-radius: 8px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .form-section {
+      background: linear-gradient(145deg, #f0f4ff, #ffffff);
+      padding: 2rem;
+      gap: 1.5rem;
+      display: flex;
+      flex-direction: column;
     }
 
     .form-section form {
@@ -96,6 +127,10 @@
       border-collapse: collapse;
     }
 
+    .table-section table tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
     .table-section th,
     .table-section td {
       padding: 1rem;
@@ -111,12 +146,221 @@
       font-size: 1rem;
       margin-right: 0.5rem;
       color: #4a4aff;
+      transition: transform 0.2s ease;
     }
 
     .delete-btn {
       color: #ff4a4a;
+      transition: transform 0.2s ease;
+    }
+
+    @media (max-width: 768px) {
+      .pricing-management {
+        flex-direction: column;
+      }
+
+      .filter-sort-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .filter-sort-bar input {
+        width: 100%;
+      }
+
+      .form-section,
+      .table-section {
+        flex: 1 1 100%;
+      }
+
+      .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+      }
+
+      .admin-header h1 {
+        font-size: 1.5rem;
+      }
+
+      .admin-header .back-link {
+        font-size: 0.95rem;
+        padding: 0.4rem 0.75rem;
+      }
+
+      .form-section button {
+        width: 100%;
+      }
+
+      .table-section table thead {
+        display: none;
+      }
+
+      .table-section table tr {
+        display: block;
+        margin-bottom: 1rem;
+        background: #fff;
+        padding: 1rem;
+        border-radius: 6px;
+      }
+
+      .table-section table td {
+        display: block;
+        padding: 0.3rem 0;
+      }
+
+      .table-section table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        display: block;
+        color: #333;
+      }
     }
   </style>
+  <script type="module">
+    // Import Firebase modules
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+      authDomain: "logicalfetch-138a8.firebaseapp.com",
+      projectId: "logicalfetch-138a8",
+      storageBucket: "logicalfetch-138a8.appspot.com",
+      messagingSenderId: "352479441148",
+      appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+      measurementId: "G-Z66R8XS5SW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const pricingForm = document.getElementById("addPricingForm");
+    const pricingTable = document.getElementById("pricingTableBody");
+
+    async function fetchPricingPlans(filterText = "", sortOrder = "") {
+      pricingTable.innerHTML = "";
+      const querySnapshot = await getDocs(collection(db, "pricing"));
+      const plans = [];
+      querySnapshot.forEach((docSnap) => {
+        plans.push({ id: docSnap.id, ...docSnap.data() });
+      });
+
+      // Apply filter
+      const filteredPlans = plans.filter(plan =>
+        plan.title.toLowerCase().includes(filterText.toLowerCase()) ||
+        (Array.isArray(plan.features) ? plan.features.join(", ") : plan.features).toLowerCase().includes(filterText.toLowerCase())
+      );
+
+      // Apply sorting
+      if (sortOrder === "low-to-high") {
+        filteredPlans.sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+      } else if (sortOrder === "high-to-low") {
+        filteredPlans.sort((a, b) => parseFloat(b.price) - parseFloat(a.price));
+      }
+
+      if (filteredPlans.length === 0) {
+        pricingTable.innerHTML = `
+          <tr>
+            <td colspan="4" style="text-align: center; color: #888;">No matching pricing plans</td>
+          </tr>
+        `;
+        return;
+      }
+
+      filteredPlans.forEach((data) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td data-label="Plan Name">${data.title || data.name || ""}</td>
+          <td data-label="Price">₹${data.price}</td>
+          <td data-label="Features">${Array.isArray(data.features) ? data.features.join(", ") : data.features}</td>
+          <td data-label="Actions">
+            <button class="edit-btn" data-id="${data.id}"><i class="fas fa-edit"></i></button>
+            <button class="delete-btn" data-id="${data.id}"><i class="fas fa-trash"></i></button>
+          </td>
+        `;
+        pricingTable.appendChild(row);
+
+        row.querySelector(".edit-btn").addEventListener("click", () => {
+          editPlan(data.id, data);
+        });
+        row.querySelector(".delete-btn").addEventListener("click", async () => {
+          await deleteDoc(doc(db, "pricing", data.id));
+          alert("🗑️ Plan deleted successfully!");
+          fetchPricingPlans(filterInput.value, sortSelect.value);
+        });
+      });
+    }
+
+    const filterInput = document.getElementById("filterInput");
+    const sortSelect = document.getElementById("sortSelect");
+
+    filterInput.addEventListener("input", () => {
+      fetchPricingPlans(filterInput.value, sortSelect.value);
+    });
+
+    sortSelect.addEventListener("change", () => {
+      fetchPricingPlans(filterInput.value, sortSelect.value);
+    });
+
+    function editPlan(id, data) {
+      const name = prompt("Edit Plan Name:", data.title);
+      const price = prompt("Edit Price (₹):", data.price);
+      const features = prompt("Edit Features (comma-separated):", Array.isArray(data.features) ? data.features.join(", ") : data.features);
+
+      if (name && price && features) {
+        const updatedData = {
+          title: name,
+          price: price,
+          features: features.split(",").map(f => f.trim()),
+          cta: "Choose Plan"
+        };
+
+        updateDoc(doc(db, "pricing", id), updatedData).then(() => {
+          fetchPricingPlans(filterInput.value, sortSelect.value);
+          alert("Plan updated successfully!");
+          // localStorage.setItem("pricingPlans", JSON.stringify(formattedPlans));
+        });
+      }
+    }
+
+    pricingForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = pricingForm.querySelector("input[placeholder='Plan Name']").value;
+      const price = pricingForm.querySelector("input[placeholder='Price (₹)']").value;
+      const features = pricingForm.querySelector("textarea").value;
+
+      // Store features as array, and use title instead of name
+      await addDoc(collection(db, "pricing"), {
+        title: name,
+        price,
+        features: features.split(',').map(f => f.trim()),
+        cta: "Choose Plan"
+      });
+
+      alert("✅ Plan added successfully!");
+
+      // Also update localStorage to reflect in index.html
+      const updatedPlans = [];
+      const querySnapshot = await getDocs(collection(db, "pricing"));
+      querySnapshot.forEach((docSnap) => {
+        updatedPlans.push(docSnap.data());
+      });
+      // Ensure the index.html reflects changes properly
+      // Format price as ₹x,xxx/year
+      const formattedPlans = updatedPlans.map(plan => ({
+        ...plan,
+        formattedPrice: `₹${Number(plan.price).toLocaleString()}/year`
+      }));
+      // localStorage.setItem("pricingPlans", JSON.stringify(formattedPlans));
+
+      pricingForm.reset();
+      fetchPricingPlans(filterInput.value, sortSelect.value);
+    });
+
+    // Fetch plans initially
+    fetchPricingPlans(filterInput.value, sortSelect.value);
+  </script>
 </head>
 <body>
 
@@ -126,9 +370,18 @@
       <a href="admin-dashboard.html" class="back-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
     </header>
 
+    <div class="filter-sort-bar">
+      <input type="text" id="filterInput" placeholder="Search by plan name or features..." />
+      <select id="sortSelect">
+        <option value="">Sort By</option>
+        <option value="low-to-high">Price: Low to High</option>
+        <option value="high-to-low">Price: High to Low</option>
+      </select>
+    </div>
+
     <section class="pricing-management">
       <div class="form-section">
-        <h2>Add New Plan</h2>
+        <h2><i class="fas fa-plus"></i> Add New Plan</h2>
         <form id="addPricingForm">
           <input type="text" placeholder="Plan Name" required />
           <input type="number" placeholder="Price (₹)" required />
@@ -138,7 +391,7 @@
       </div>
 
       <div class="table-section">
-        <h2>Existing Plans</h2>
+        <h2><i class="fas fa-list"></i> Existing Plans</h2>
         <table>
           <thead>
             <tr>
@@ -149,24 +402,6 @@
             </tr>
           </thead>
           <tbody id="pricingTableBody">
-            <tr>
-              <td>Basic</td>
-              <td>₹999</td>
-              <td>Landing Page, Hosting</td>
-              <td>
-                <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                <button class="delete-btn"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr>
-              <td>Premium</td>
-              <td>₹2499</td>
-              <td>Landing Page, Hosting, Contact Form</td>
-              <td>
-                <button class="edit-btn"><i class="fas fa-edit"></i></button>
-                <button class="delete-btn"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
           </tbody>
         </table>
       </div>

@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
+    localStorage.removeItem('pricingPlans');
     // === Mobile Menu Toggle ===
     const menuBtn = document.querySelector('.menu-btn');
     const navLinks = document.querySelector('.nav-links');
@@ -81,62 +82,48 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // === Pricing Section ===
-    const pricingData = [
-        {
-            title: 'Basic',
-            price: '₹15,000',
-            period: '/year',
-            features: [
-                'Basic Institute App',
-                'Up to 500 students',
-                'Announcements',
-                'Event Calendar',
-                'Email Support'
-            ]
-        },
-        {
-            title: 'Standard',
-            price: '₹25,000',
-            period: '/year',
-            popular: true,
-            features: [
-                'Everything in Basic',
-                'Up to 2000 students',
-                'Attendance System',
-                'Fee Management',
-                'Priority Support'
-            ]
-        },
-        {
-            title: 'Premium',
-            price: '₹40,000',
-            period: '/year',
-            features: [
-                'Everything in Standard',
-                'Unlimited students',
-                'E-Learning Module',
-                'Parent Portal',
-                '24/7 Support'
-            ]
+    // === Dynamic Pricing Section from localStorage ===
+    const dynamicPricingGrid = document.querySelector('.pricing-grid');
+    if (dynamicPricingGrid) {
+        dynamicPricingGrid.innerHTML = ''; // clear old content
+        const plansJSON = localStorage.getItem('pricingPlans');
+        if (!plansJSON || plansJSON === "undefined" || plansJSON === "{}" || plansJSON === "null") {
+            localStorage.removeItem("pricingPlans");
+            dynamicPricingGrid.innerHTML = `<p class="no-data">No pricing plans available.</p>`;
+            return;
         }
-    ];
+        let planSet = new Set();
 
-    const pricingGrid = document.querySelector('.pricing-grid');
-    if (pricingGrid) {
-        pricingData.forEach(plan => {
-            pricingGrid.innerHTML += `
-                <div class="pricing-card ${plan.popular ? 'popular' : ''}" data-aos="fade-up">
-                    ${plan.popular ? '<span class="popular-tag">Most Popular</span>' : ''}
-                    <h3>${plan.title}</h3>
-                    <div class="price">${plan.price} <span>${plan.period}</span></div>
-                    <ul class="pricing-features">
-                        ${plan.features.map(f => `<li>${f}</li>`).join('')}
-                    </ul>
-                    <a href="#contact" class="btn ${plan.popular ? 'btn-primary' : 'btn-outline'}">Choose Plan</a>
-                </div>
-            `;
-        });
+        try {
+            const plans = JSON.parse(plansJSON) || [];
+            if (plans.length === 0) {
+                dynamicPricingGrid.innerHTML = `<p class="no-data">No pricing plans available.</p>`;
+            } else {
+                plans.forEach(plan => {
+                    const planKey = `${plan.name}-${plan.price}`;
+                    if (!planSet.has(planKey)) {
+                        planSet.add(planKey);
+                        const priceFormatted = Number(plan.price).toLocaleString('en-IN');
+                        const isPopular = plan.popular ? 'popular' : '';
+                        const popularTag = plan.popular ? `<span class="popular-tag">Most Popular</span>` : '';
+                        const featureList = plan.features.map(f => `<li>${f.trim()}</li>`).join('');
+
+                        dynamicPricingGrid.innerHTML += `
+                            <div class="pricing-card ${isPopular}" data-aos="fade-up">
+                                ${popularTag}
+                                <h3>${plan.name}</h3>
+                                <div class="price">₹${priceFormatted} <span>/year</span></div>
+                                <ul class="pricing-features">${featureList}</ul>
+                                <a href="#contact" class="btn ${isPopular ? 'btn-primary' : 'btn-outline'}">Choose Plan</a>
+                            </div>
+                        `;
+                    }
+                });
+            }
+        } catch (error) {
+            dynamicPricingGrid.innerHTML = `<p class="error">Error loading pricing plans.</p>`;
+            console.error('Invalid pricingPlans in localStorage:', error);
+        }
     }
 
     // === Contact Form Submission ===

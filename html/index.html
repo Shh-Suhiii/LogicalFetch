@@ -19,10 +19,90 @@
     <link rel="stylesheet" href="css/style.css">
 
     <style>
+        .no-data {
+          text-align: center;
+          color: #555;
+          font-size: 1.1rem;
+          padding: 2rem 0;
+        }
         .faq-answer {
             max-height: none !important;
             overflow: visible !important;
             padding: 1rem 1.5rem !important;
+        }
+        .custom-service-style {
+          background: #ffffff;
+          border-radius: 12px;
+          padding: 1.8rem;
+          margin: 1rem auto;
+          max-width: 720px;
+          box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+          text-align: left;
+        }
+
+        .custom-service-style:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+        }
+
+        .service-title {
+          color: #3a0ca3;
+          font-weight: 600;
+          font-size: 1.6rem;
+          margin-bottom: 0.6rem;
+        }
+
+        .service-description {
+          font-size: 1rem;
+          color: #333;
+          line-height: 1.6;
+        }
+
+        /* --- Enhanced Pricing Card Styles --- */
+        .pricing-card {
+          background: #fff;
+          border-radius: 12px;
+          padding: 2rem;
+          margin: 1rem;
+          box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+          text-align: center;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pricing-card:hover {
+          transform: translateY(-8px);
+          box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+        }
+
+        .pricing-card h3 {
+          font-size: 1.8rem;
+          color: #3a0ca3;
+          margin-bottom: 0.5rem;
+        }
+
+        .pricing-card .price {
+          font-size: 1.5rem;
+          color: #000;
+          font-weight: bold;
+          margin-bottom: 1rem;
+        }
+
+        .pricing-card ul {
+          list-style: none;
+          padding: 0;
+          margin-bottom: 1.5rem;
+          text-align: left;
+        }
+
+        .pricing-card ul li {
+          margin-bottom: 0.5rem;
+          color: #555;
+        }
+
+        .pricing-card .btn {
+          padding: 0.6rem 1.2rem;
+          font-size: 1rem;
         }
     </style>
 
@@ -69,7 +149,7 @@
     <!-- Hero Section -->
     <section class="hero" id="home">
         <div class="hero-bg"></div>
-        <div class="hero-content">
+        <div class="hero-content visible">
             <h1><span class="highlight">Empower</span> Your Institute with Smart Mobile Solutions</h1>
             <h2 class="hero-subtitle">Simplify operations • Boost engagement • Go digital</h2>
             <div class="hero-text">
@@ -82,7 +162,7 @@
                 <a href="admin-login.html" class="btn btn-outline">Admin Login</a>
             </div>
         </div>
-        <div class="hero-image">
+        <div class="hero-image visible">
             <img src="../images/logicalfetch-logo.jpeg" alt="Mobile App Development" loading="lazy" class="hero-logo">
         </div>
     </section>
@@ -96,20 +176,8 @@
             <p>Comprehensive mobile app solutions for educational institutes</p>
         </div>
 
-        <div class="services-grid">
-            <!-- Service cards will be added by JavaScript -->
-            <div class="service-card placeholder-card">
-                <h3>Custom App Development</h3>
-                <p>Tailored mobile applications for your educational institute’s needs.</p>
-            </div>
-            <div class="service-card placeholder-card">
-                <h3>Student & Parent Portals</h3>
-                <p>Easy-to-use portals to improve communication and engagement.</p>
-            </div>
-            <div class="service-card placeholder-card">
-                <h3>Attendance & Fee Management</h3>
-                <p>Automated solutions to simplify your administrative workload.</p>
-            </div>
+        <div class="services-grid" id="services-section">
+          <!-- Dynamic cards will be injected here -->
         </div>
     </section>
 
@@ -144,39 +212,7 @@
             <p>Affordable packages for institutes of all sizes</p>
         </div>
 
-        <div class="pricing-grid">
-            <!-- Pricing cards will be added by JavaScript -->
-            <div class="pricing-card">
-                <h3>Starter</h3>
-                <p class="price">₹4,999/month</p>
-                <ul>
-                    <li>Up to 100 Users</li>
-                    <li>Basic App Features</li>
-                    <li>Email Support</li>
-                </ul>
-                <a href="#contact" class="btn btn-primary">Choose Plan</a>
-            </div>
-            <div class="pricing-card">
-                <h3>Standard</h3>
-                <p class="price">₹9,999/month</p>
-                <ul>
-                    <li>Up to 500 Users</li>
-                    <li>All Core Features</li>
-                    <li>Email & Phone Support</li>
-                </ul>
-                <a href="#contact" class="btn btn-primary">Choose Plan</a>
-            </div>
-            <div class="pricing-card">
-                <h3>Enterprise</h3>
-                <p class="price">Custom</p>
-                <ul>
-                    <li>Unlimited Users</li>
-                    <li>Custom Feature Integration</li>
-                    <li>Priority Support</li>
-                </ul>
-                <a href="#contact" class="btn btn-primary">Request Quote</a>
-            </div>
-        </div>
+        <div class="pricing-grid"></div>
 
         <div class="custom-solution">
             <p>Need a custom solution tailored for your institute?</p>
@@ -280,7 +316,7 @@
                     </div>
                     <div class="contact-text">
                         <h3>Phone/WhatsApp</h3>
-                        <a href="tel:8279795991">+91 8279795991</a>
+                        <a href="tel:9528667038">+91 9528667038</a>
                     </div>
                 </div>
 
@@ -366,12 +402,12 @@
                     <p>Empowering educational institutes with cutting-edge mobile solutions to enhance learning and
                         administration.</p>
                     <div class="social-links">
-                        <a href="https://wa.me/918279795991" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                        <a href="https://wa.me/919528667038" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
                         <a href="https://instagram.com/logicalfetch" aria-label="Instagram"><i
                                 class="fab fa-instagram"></i></a>
                         <a href="https://facebook.com/logicalfetch" aria-label="Facebook"><i
                                 class="fab fa-facebook-f"></i></a>
-                        <a href="https://linkedin.com/company/logicalfetch" aria-label="LinkedIn"><i
+                        <a href="https://linkedin.com/company/logicalf  etch" aria-label="LinkedIn"><i
                                 class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
@@ -436,6 +472,7 @@
         <i class="fab fa-whatsapp"></i>
     </a>
 
+</script>
     <script>
         // Show Back to Top button on scroll
         const backToTopBtn = document.querySelector(".back-to-top");
@@ -446,6 +483,106 @@
                 backToTopBtn.classList.remove("show");
             }
         });
+    </script>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+        authDomain: "logicalfetch-138a8.firebaseapp.com",
+        projectId: "logicalfetch-138a8",
+        storageBucket: "logicalfetch-138a8.appspot.com",
+        messagingSenderId: "352479441148",
+        appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+        measurementId: "G-Z66R8XS5SW"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      const servicesSection = document.getElementById("services-section");
+      const faqContainer = document.querySelector(".faq-container");
+
+      async function fetchServices() {
+        const querySnapshot = await getDocs(collection(db, "services"));
+        servicesSection.innerHTML = ""; // clear old content
+
+        querySnapshot.forEach((doc) => {
+          const service = doc.data();
+          const card = document.createElement("div");
+          card.classList.add("service-card", "custom-service-style");
+          card.innerHTML = `
+            <h3 class="service-title">${service.title}</h3>
+            <p class="service-description">${service.description}</p>
+          `;
+          servicesSection.appendChild(card);
+        });
+      }
+
+      // Clear pricingPlans from localStorage to prevent duplicates/stale entries
+      localStorage.removeItem("pricingPlans");
+      fetchServices();
+
+      async function fetchFAQs() {
+        const faqSnapshot = await getDocs(collection(db, "faqs"));
+        faqContainer.innerHTML = ""; // clear old content
+
+        faqSnapshot.forEach((doc) => {
+          const faq = doc.data();
+
+          const faqItem = document.createElement("div");
+          faqItem.classList.add("faq-item");
+
+          faqItem.innerHTML = `
+            <h3 class="faq-question">${faq.question}</h3>
+            <div class="faq-answer"><p>${faq.answer}</p></div>
+          `;
+
+          faqContainer.appendChild(faqItem);
+        });
+      }
+
+      fetchFAQs();
+
+      // Fetch Pricing Plans from Firestore and render (improved to avoid stale/overlapping rendering)
+      async function fetchPricing() {
+        const pricingGrid = document.querySelector(".pricing-grid");
+        pricingGrid.innerHTML = ""; // Clear grid
+
+        const querySnapshot = await getDocs(collection(db, "pricing"));
+
+        if (querySnapshot.empty) {
+          pricingGrid.innerHTML = "<p class='no-data'>No pricing plans available.</p>";
+          return;
+        }
+
+        querySnapshot.forEach((doc) => {
+          const plan = doc.data();
+
+          if (!plan.title || !plan.price || !plan.features || !Array.isArray(plan.features)) {
+            console.warn("Skipping invalid pricing entry:", plan);
+            return;
+          }
+
+          const card = document.createElement("div");
+          card.classList.add("pricing-card");
+
+          card.innerHTML = `
+            <h3>${plan.title}</h3>
+            <p class="price">₹${Number(plan.price).toLocaleString("en-IN")}/year</p>
+            <ul>
+              ${plan.features.map(feature => `<li><i class="fas fa-check-circle"></i> ${feature}</li>`).join("")}
+            </ul>
+            <a href="#contact" class="btn btn-primary">${plan.cta || "Choose Plan"}</a>
+          `;
+
+          pricingGrid.appendChild(card);
+        });
+      }
+
+      fetchPricing();
     </script>
 </body>
 

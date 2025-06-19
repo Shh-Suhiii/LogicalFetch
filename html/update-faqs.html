@@ -51,6 +51,10 @@
             transition: transform 0.2s, box-shadow 0.2s;
         }
 
+        .faq-item.highlight {
+            background-color: #e6f7ff;
+        }
+
         .faq-item:hover {
             transform: translateY(-3px);
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -59,11 +63,49 @@
         .faq-item h4 {
             margin-bottom: 0.5rem;
             color: #333;
+            cursor: pointer;
+            user-select: none;
         }
 
         .faq-item p {
             color: #555;
             margin-bottom: 0.75rem;
+        }
+
+        .faq-item.collapsed p {
+            display: block;
+        }
+
+        .faq-item h4 {
+            position: relative;
+            padding-left: 1.75rem;
+        }
+        .faq-item h4::before {
+            content: "❓";
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 1.2rem;
+        }
+        .faq-item p {
+            max-height: 1000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-item.collapsed p {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in;
+        }
+
+        .faq-item h4::after {
+            content: " ▼";
+            float: right;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.collapsed h4::after {
+            transform: rotate(-90deg);
         }
 
         .faq-item .actions {
@@ -145,6 +187,63 @@
             transform: translateY(0);
           }
         }
+        .faq-item small {
+            display: block;
+            font-size: 0.875rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+            font-style: italic;
+        }
+        @media (max-width: 768px) {
+            .faqs-container {
+                padding: 1rem;
+            }
+
+            .faq-item {
+                padding: 1rem;
+            }
+
+            .add-faq-form {
+                padding: 1rem;
+            }
+
+            header.faqs-header h1 {
+                font-size: 2rem;
+            }
+
+            header.faqs-header img {
+                width: 30px;
+                height: 30px;
+            }
+
+            .faq-item .actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .faq-item button {
+                width: 100%;
+                margin-top: 0.5rem;
+            }
+
+            .add-faq-form input,
+            .add-faq-form textarea,
+            #faq-search,
+            #faq-category {
+                font-size: 1rem;
+                padding: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header.faqs-header {
+                padding: 1.5rem;
+            }
+
+            header.faqs-header h1 {
+                font-size: 1.75rem;
+            }
+        }
     </style>
 </head>
 
@@ -163,33 +262,152 @@
     </div>
 
     <main class="faqs-container" style="margin-top: 2rem;">
+        <div style="margin-bottom: 1.5rem;">
+            <input type="text" id="faq-search" placeholder="Search FAQs..." style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 5px; font-size: 1rem;" />
+        </div>
         <h2 style="margin-bottom: 1.5rem; color: #222;">Existing FAQs</h2>
-        <div class="faq-item">
-            <h4>What is LogicalFetch?</h4>
-            <p>LogicalFetch is a platform that builds smart digital solutions for institutions.</p>
-            <div class="actions">
-                <button class="edit-btn">✏️ Edit</button>
-                <button class="delete-btn">🗑️ Delete</button>
-            </div>
-        </div>
-        <div class="faq-item">
-            <h4>Can I get a custom app for my tuition center?</h4>
-            <p>Yes, we create customized apps tailored to your academic needs.</p>
-            <div class="actions">
-                <button class="edit-btn">✏️ Edit</button>
-                <button class="delete-btn">🗑️ Delete</button>
-            </div>
-        </div>
+        <div id="faq-list"></div>
 
         <div class="add-faq-form" style="animation: fadeInUp 0.6s ease-out;">
             <h3>Add New FAQ</h3>
-            <form>
-                <input type="text" placeholder="Enter Question" required />
-                <textarea placeholder="Enter Answer" rows="4" required></textarea>
+            <form id="faq-form">
+                <select id="faq-category" required style="width: 100%; padding: 0.75rem; margin-bottom: 1rem; border: 1px solid #ccc; border-radius: 5px;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="General">General</option>
+                    <option value="Pricing">Pricing</option>
+                    <option value="Services">Services</option>
+                </select>
+                <input type="text" id="faq-question" placeholder="Enter Question" required />
+                <textarea id="faq-answer" placeholder="Enter Answer" rows="4" required></textarea>
                 <button type="submit">Add FAQ</button>
+                <p id="form-feedback" style="color: green; margin-top: 0.5rem;"></p>
             </form>
         </div>
     </main>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc, onSnapshot, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+        authDomain: "logicalfetch-138a8.firebaseapp.com",
+        projectId: "logicalfetch-138a8",
+        storageBucket: "logicalfetch-138a8.appspot.com",
+        messagingSenderId: "352479441148",
+        appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+        measurementId: "G-Z66R8XS5SW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    const faqList = document.getElementById('faq-list');
+    const form = document.getElementById('faq-form');
+    const questionInput = document.getElementById('faq-question');
+    const answerInput = document.getElementById('faq-answer');
+    const feedback = document.getElementById('form-feedback');
+    const searchInput = document.getElementById('faq-search');
+    let allFAQs = [];
+
+    searchInput.addEventListener('input', () => {
+        const keyword = searchInput.value.toLowerCase();
+        faqList.innerHTML = '';
+        allFAQs
+            .filter(faq => faq.question.toLowerCase().includes(keyword) || faq.answer.toLowerCase().includes(keyword))
+            .forEach(faq => renderFAQ(faq.id, faq.question, faq.answer, faq.createdAt, faq.updatedAt, faq.category));
+    });
+
+    function renderFAQ(id, question, answer, createdAt, updatedAt, category) {
+        const div = document.createElement('div');
+        div.className = 'faq-item highlight collapsed';
+        div.innerHTML = `
+            <h4>${question} <span style="font-size: 0.875rem; background: #eee; color: #555; padding: 2px 8px; border-radius: 4px; margin-left: 0.5rem;">${category || 'Uncategorized'}</span></h4>
+            <p>${answer}</p>
+            <div class="actions">
+                <button class="edit-btn" data-id="${id}">✏️ Edit</button>
+                <button class="delete-btn" data-id="${id}">🗑️ Delete</button>
+            </div>
+        `;
+        const dateText = updatedAt ? `Last Updated: ${updatedAt.toDate().toLocaleString()}` :
+                        createdAt ? `Added: ${createdAt.toDate().toLocaleString()}` : '';
+        const timestampElement = document.createElement('small');
+        timestampElement.classList.add('timestamp');
+        timestampElement.textContent = dateText;
+        div.insertBefore(timestampElement, div.children[1]);
+
+        faqList.appendChild(div);
+
+        setTimeout(() => div.classList.remove('highlight'), 2000);
+
+        const header = div.querySelector('h4');
+        header.addEventListener('click', () => {
+            div.classList.toggle('collapsed');
+        });
+
+        div.querySelector('.delete-btn').addEventListener('click', async () => {
+            const confirmDelete = confirm("Are you sure you want to delete this FAQ?");
+            if (confirmDelete) {
+                await deleteDoc(doc(db, 'faqs', id));
+            }
+        });
+
+        div.querySelector('.edit-btn').addEventListener('click', () => {
+            const isEditing = div.classList.toggle('editing');
+
+            if (isEditing) {
+                const questionText = header.textContent;
+                const answerText = div.querySelector('p').textContent;
+
+                header.innerHTML = `<input type="text" value="${questionText}" style="width: 100%; font-size: 1.1rem;">`;
+                div.querySelector('p').innerHTML = `<textarea style="width: 100%; padding: 0.5rem;">${answerText}</textarea>`;
+                div.querySelector('.edit-btn').textContent = '💾 Save';
+            } else {
+                const newQuestion = div.querySelector('h4 input').value.trim();
+                const newAnswer = div.querySelector('p textarea').value.trim();
+
+                if (newQuestion && newAnswer) {
+                    header.textContent = newQuestion;
+                    div.querySelector('p').textContent = newAnswer;
+                    div.querySelector('.edit-btn').textContent = '✏️ Edit';
+
+                    const faqRef = doc(db, 'faqs', id);
+                    faqRef && updateDoc(faqRef, {
+                        question: newQuestion,
+                        answer: newAnswer,
+                        updatedAt: serverTimestamp()
+                    });
+                } else {
+                    div.classList.add('editing'); // stay in edit mode if invalid
+                }
+            }
+        });
+    }
+
+    onSnapshot(collection(db, 'faqs'), (snapshot) => {
+        faqList.innerHTML = '';
+        allFAQs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const keyword = searchInput.value.toLowerCase();
+        const filtered = keyword
+            ? allFAQs.filter(faq => faq.question.toLowerCase().includes(keyword) || faq.answer.toLowerCase().includes(keyword))
+            : allFAQs;
+
+        filtered.forEach(faq => renderFAQ(faq.id, faq.question, faq.answer, faq.createdAt, faq.updatedAt, faq.category));
+    });
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const question = questionInput.value.trim();
+        const answer = answerInput.value.trim();
+        if (!question || !answer) return;
+        const category = document.getElementById('faq-category').value;
+        await addDoc(collection(db, 'faqs'), { question, answer, category, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+        questionInput.value = '';
+        answerInput.value = '';
+        feedback.textContent = "FAQ added successfully!";
+        setTimeout(() => feedback.textContent = "", 2000);
+    });
+</script>
 </body>
 
 </html>
