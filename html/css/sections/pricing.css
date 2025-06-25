@@ -18,15 +18,18 @@
     gap: 2rem;
     max-width: 1200px;
     margin: 0 auto;
+    justify-content: center;
 }
 
 .pricing-card {
     background-color: #fff;
     padding: 2.5rem 2rem;
     border-radius: var(--radius);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     border: 1px solid #e0e0e0;
+    width: 320px;
+    margin: auto;
 }
 
 .pricing-card:hover {
@@ -76,4 +79,9 @@
     background-color: #6f42c1;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(136, 86, 255, 0.2);
+}
+
+
+.pricing-grid:has(.pricing-card) .no-data {
+    display: none !important;
 }

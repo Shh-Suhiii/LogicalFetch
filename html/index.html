@@ -231,18 +231,7 @@
         </div>
 
         <div class="demo-gallery">
-            <div class="demo-item">
-                <img src="../images/demo1.png" alt="Demo Project 1" loading="lazy">
-                <h3>BCAverse</h3>
-            </div>
-            <div class="demo-item">
-                <img src="../images/demo2.png" alt="Demo Project 2" loading="lazy">
-                <h3>Modern Periodic Table</h3>
-            </div>
-            <div class="demo-item">
-                <img src="../images/demo3.jpeg" alt="Demo Project 3" loading="lazy">
-                <h3>Food Delievery App</h3>
-            </div>
+            <!-- Demo projects will be dynamically rendered here -->
         </div>
     </section>
 
@@ -549,15 +538,13 @@
       // Fetch Pricing Plans from Firestore and render (improved to avoid stale/overlapping rendering)
       async function fetchPricing() {
         const pricingGrid = document.querySelector(".pricing-grid");
-        pricingGrid.innerHTML = ""; // Clear grid
+        pricingGrid.innerHTML = ""; 
+        const existingNoData = document.querySelector(".pricing .no-data");
+        if (existingNoData) existingNoData.remove();
 
         const querySnapshot = await getDocs(collection(db, "pricing"));
 
-        if (querySnapshot.empty) {
-          pricingGrid.innerHTML = "<p class='no-data'>No pricing plans available.</p>";
-          return;
-        }
-
+        let validPlansCount = 0;
         querySnapshot.forEach((doc) => {
           const plan = doc.data();
 
@@ -579,10 +566,54 @@
           `;
 
           pricingGrid.appendChild(card);
+          validPlansCount++;
         });
+
+        if (validPlansCount === 0) {
+          const noDataMsg = document.createElement("p");
+          noDataMsg.classList.add("no-data");
+          noDataMsg.textContent = "No pricing plans available.";
+          pricingGrid.appendChild(noDataMsg);
+        }
       }
 
       fetchPricing();
+
+      async function fetchDemoProjects() {
+        const demoGallery = document.querySelector(".demo-gallery");
+        if (!demoGallery) return;
+
+        demoGallery.innerHTML = ""; // Clear existing demos
+
+        try {
+          const querySnapshot = await getDocs(collection(db, "demos"));
+
+          if (querySnapshot.empty) {
+            demoGallery.innerHTML = '<p class="no-data">No demo projects found.</p>';
+            return;
+          }
+
+          querySnapshot.forEach((doc) => {
+            const project = doc.data();
+
+            const item = document.createElement("div");
+            item.classList.add("demo-item");
+
+            item.innerHTML = `
+              <img src="${project.imageUrl}" alt="${project.title}" loading="lazy">
+              <h3>${project.title}</h3>
+              <p>${project.description || ""}</p>
+            `;
+
+            demoGallery.appendChild(item);
+          });
+        } catch (error) {
+          console.error("Error loading demo projects:", error);
+          demoGallery.innerHTML = '<p class="no-data">Failed to load demo projects.</p>';
+        }
+      }
+
+      fetchDemoProjects();
     </script>
 </body>
 

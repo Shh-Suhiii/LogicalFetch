@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    localStorage.removeItem('pricingPlans');
     // === Mobile Menu Toggle ===
     const menuBtn = document.querySelector('.menu-btn');
     const navLinks = document.querySelector('.nav-links');
@@ -85,40 +84,58 @@ document.addEventListener('DOMContentLoaded', function () {
     // === Dynamic Pricing Section from localStorage ===
     const dynamicPricingGrid = document.querySelector('.pricing-grid');
     if (dynamicPricingGrid) {
-        dynamicPricingGrid.innerHTML = ''; // clear old content
+        dynamicPricingGrid.innerHTML = ''; // clear previous content
+
         const plansJSON = localStorage.getItem('pricingPlans');
+
         if (!plansJSON || plansJSON === "undefined" || plansJSON === "{}" || plansJSON === "null") {
             localStorage.removeItem("pricingPlans");
             dynamicPricingGrid.innerHTML = `<p class="no-data">No pricing plans available.</p>`;
             return;
         }
-        let planSet = new Set();
 
         try {
             const plans = JSON.parse(plansJSON) || [];
-            if (plans.length === 0) {
-                dynamicPricingGrid.innerHTML = `<p class="no-data">No pricing plans available.</p>`;
-            } else {
-                plans.forEach(plan => {
-                    const planKey = `${plan.name}-${plan.price}`;
-                    if (!planSet.has(planKey)) {
-                        planSet.add(planKey);
-                        const priceFormatted = Number(plan.price).toLocaleString('en-IN');
-                        const isPopular = plan.popular ? 'popular' : '';
-                        const popularTag = plan.popular ? `<span class="popular-tag">Most Popular</span>` : '';
-                        const featureList = plan.features.map(f => `<li>${f.trim()}</li>`).join('');
+            let planSet = new Set();
+            let validPlanExists = false;
 
-                        dynamicPricingGrid.innerHTML += `
-                            <div class="pricing-card ${isPopular}" data-aos="fade-up">
-                                ${popularTag}
-                                <h3>${plan.name}</h3>
-                                <div class="price">₹${priceFormatted} <span>/year</span></div>
-                                <ul class="pricing-features">${featureList}</ul>
-                                <a href="#contact" class="btn ${isPopular ? 'btn-primary' : 'btn-outline'}">Choose Plan</a>
-                            </div>
-                        `;
-                    }
-                });
+            plans.forEach(plan => {
+                if (!plan.title || !plan.price || !Array.isArray(plan.features)) {
+                    localStorage.removeItem("pricingPlans");
+                    return;
+                }
+
+                const planKey = `${plan.title}-${plan.price}`;
+                if (planSet.has(planKey)) return;
+
+                planSet.add(planKey);
+                validPlanExists = true;
+
+                const priceFormatted = Number(plan.price).toLocaleString('en-IN');
+                const isPopular = plan.popular ? 'popular' : '';
+                const popularTag = plan.popular ? `<span class="popular-tag">Most Popular</span>` : '';
+                const featureList = plan.features.map(f => `<li>${f.trim()}</li>`).join('');
+
+                dynamicPricingGrid.innerHTML += `
+                    <div class="pricing-card ${isPopular}" data-aos="fade-up">
+                        ${popularTag}
+                        <h3>${plan.title}</h3>
+                        <div class="price">₹${priceFormatted} <span>/year</span></div>
+                        <ul class="pricing-features">${featureList}</ul>
+                        <a href="#contact" class="btn ${isPopular ? 'btn-primary' : 'btn-outline'}">Choose Plan</a>
+                    </div>
+                `;
+            });
+
+            if (validPlanExists) {
+                const noDataEl = document.querySelector('.no-data');
+                if (noDataEl) noDataEl.remove();
+            }
+
+            if (!validPlanExists) {
+                const oldNoData = document.querySelector('.no-data');
+                if (oldNoData) oldNoData.remove();
+                dynamicPricingGrid.innerHTML = `<p class="no-data">No pricing plans available.</p>`;
             }
         } catch (error) {
             dynamicPricingGrid.innerHTML = `<p class="error">Error loading pricing plans.</p>`;
