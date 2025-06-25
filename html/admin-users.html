@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Admin Users</title>
+  <link rel="stylesheet" href="../css/dashboard.css" />
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, updateDoc, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+      authDomain: "logicalfetch-138a8.firebaseapp.com",
+      projectId: "logicalfetch-138a8",
+      storageBucket: "logicalfetch-138a8.appspot.com",
+      messagingSenderId: "352479441148",
+      appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+      measurementId: "G-Z66R8XS5SW"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
+
+    const adminTable = document.getElementById("adminTable");
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.href = "admin-login.html";
+        return;
+      }
+
+      const docRef = doc(db, "admins", user.email);
+      const docSnap = await getDoc(docRef);
+      if (!docSnap.exists() || docSnap.data().role !== "superadmin") {
+        alert("You don’t have access to this page.");
+        window.location.href = "admin-dashboard.html";
+        return;
+      }
+
+      const adminsSnap = await getDocs(collection(db, "admins"));
+      adminTable.innerHTML = "";
+
+      adminsSnap.forEach((docSnap) => {
+        const data = docSnap.data();
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${docSnap.id}</td>
+          <td>${data.role || "viewer"}</td>
+          <td>
+            <select data-id="${docSnap.id}">
+              <option value="viewer" ${data.role === "viewer" ? "selected" : ""}>Viewer</option>
+              <option value="editor" ${data.role === "editor" ? "selected" : ""}>Editor</option>
+              <option value="superadmin" ${data.role === "superadmin" ? "selected" : ""}>Superadmin</option>
+            </select>
+          </td>
+          <td>${data.lastLogin ? new Date(data.lastLogin).toLocaleString() : "N/A"}</td>
+          <td>
+            <input type="checkbox" class="toggle-active" data-id="${docSnap.id}" ${data.isActive === false ? "" : "checked"}>
+          </td>
+        `;
+
+        row.querySelector("select").addEventListener("change", async (e) => {
+          const newRole = e.target.value;
+          const userId = e.target.dataset.id;
+          await updateDoc(doc(db, "admins", userId), { role: newRole });
+          alert(`Updated ${userId}'s role to ${newRole}`);
+        });
+
+        row.querySelector(".toggle-active").addEventListener("change", async (e) => {
+          const userId = e.target.dataset.id;
+          const isActive = e.target.checked;
+          await updateDoc(doc(db, "admins", userId), { isActive });
+          alert(`${userId} is now ${isActive ? "active" : "deactivated"}`);
+        });
+
+        adminTable.appendChild(row);
+      });
+    });
+  </script>
+</head>
+<body>
+  <main class="dashboard-content" style="padding: 20px;">
+    <h2>Admin Role Management</h2>
+    <table border="1" cellpadding="10" style="width: 100%; background: #fff;">
+      <thead>
+        <tr>
+          <th>Email</th>
+          <th>Current Role</th>
+          <th>Change Role</th>
+          <th>Last Login</th>
+          <th>Active</th>
+        </tr>
+      </thead>
+      <tbody id="adminTable">
+        <tr><td colspan="5">Loading admins...</td></tr>
+      </tbody>
+    </table>
+  </main>
+</body>
+</html>

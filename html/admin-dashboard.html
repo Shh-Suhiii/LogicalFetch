@@ -220,7 +220,7 @@
     <header class="dashboard-header">
       <div style="display: flex; align-items: center; gap: 10px;">
         <img src="../images/admin-avatar.png" alt="Admin" style="width: 40px; height: 40px; border-radius: 50%;">
-        <h1 style="margin: 0;">Welcome, Admin</h1>
+        <h1 style="margin: 0;" id="adminWelcome">Welcome, Admin</h1>
       </div>
       <button class="logout-btn" onclick="logout()">Logout</button>
     </header>
@@ -254,9 +254,30 @@
         <p>Messages Received: <strong id="messagesReceived" style="color:#4a4aff;">—</strong></p>
       </div>
       <div class="dashboard-card" style="background: #fff8e1; border-left: 5px solid #ffc107;">
-        <h3><i class="fas fa-bullhorn"></i> Announcements</h3>
-        <p><strong>12 Jun 2025:</strong> Maintenance scheduled at 11 PM.</p>
-        <p><strong>10 Jun 2025:</strong> New pricing plans now live.</p>
+        <h3>
+          <i class="fas fa-bullhorn"></i> Announcements
+          <i id="editAnnouncementsIcon" class="fas fa-pen" title="Edit" style="cursor:pointer; margin-left:10px; color:#555;"></i>
+          <button id="saveAnnouncementsBtn" style="display:none; float:right; font-size: 12px; padding: 4px 8px; background: #ffc107; border: none; border-radius: 4px; cursor: pointer;">Save</button>
+        </h3>
+        <div id="announcementsContent" contenteditable="true" style="outline: none;">
+          <p><strong>12 Jun 2025:</strong> Maintenance scheduled at 11 PM.</p>
+          <p><strong>10 Jun 2025:</strong> New pricing plans now live.</p>
+        </div>
+      </div>
+      <div class="dashboard-card" style="background: #fce4ec; border-left: 5px solid #e91e63;">
+        <h3><i class="fas fa-calendar-alt"></i> Calendar Reminders</h3>
+        <ul id="calendarRemindersList" style="padding-left: 1.2rem; margin: 0;">
+          <li>Loading upcoming tasks...</li>
+        </ul>
+        <form id="reminderForm" style="margin-top: 10px;">
+          <input type="text" id="reminderTitle" placeholder="Reminder Title" required style="padding: 6px; width: 60%; border: 1px solid #ccc; border-radius: 4px;" />
+          <input type="date" id="reminderDate" required style="padding: 6px; border: 1px solid #ccc; border-radius: 4px; margin-left: 5px;" />
+          <button type="submit" style="padding: 6px 12px; background: #e91e63; color: white; border: none; border-radius: 4px; margin-left: 5px;">Add</button>
+        </form>
+      </div>
+      <div class="dashboard-card" style="background: #fff3f3; border-left: 5px solid #f44336;">
+        <h3><i class="fas fa-database"></i> Storage Usage</h3>
+        <p>Total Storage Used: <strong id="storageUsage" style="color:#f44336;">Loading...</strong></p>
       </div>
       <div class="dashboard-card" style="background: #e8f5e9; border-left: 5px solid #4caf50;">
         <h3><i class="fas fa-lightbulb"></i> Tips & Tricks</h3>
@@ -265,13 +286,24 @@
       </div>
       <div class="dashboard-card" style="background: #fefefe; border-left: 5px solid #9c27b0;">
         <h3><i class="fas fa-history"></i> Recent Activities</h3>
-        <p><strong>Admin</strong> updated pricing plans - <em>2 hrs ago</em></p>
-        <p><strong>Admin</strong> added a new demo project - <em>1 day ago</em></p>
+        <div id="activityFeed">
+          <p>Loading activity feed...</p>
+        </div>
       </div>
 
       <a href="settings.html" class="dashboard-card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
         <h3><span class="icon"><i class="fas fa-cog"></i></span> Admin Settings</h3>
         <p>Configure your preferences and account settings.</p>
+      </a>
+
+      <a href="admin-users.html" class="dashboard-card" style="background: #f3e5f5; border-left: 5px solid #9c27b0;">
+        <h3><span class="icon"><i class="fas fa-users-cog"></i></span> Manage Admin Roles</h3>
+        <p>View and update roles assigned to each admin user.</p>
+      </a>
+
+      <a href="login-history.html" class="dashboard-card" style="background: #ede7f6; border-left: 5px solid #673ab7;">
+        <h3><span class="icon"><i class="fas fa-sign-in-alt"></i></span> Admin Login History</h3>
+        <p>Track and review login activity for all admin users.</p>
       </a>
 
       <a href="edit-index.html" class="dashboard-card" style="background: #fff3e0; border-left: 5px solid #ff9800;">
@@ -298,30 +330,75 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
 
-  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+  import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   const db = getFirestore(app);
 
-  async function fetchStats() {
-    const demosSnap = await getDocs(collection(db, "demos"));
-    const contactsSnap = await getDocs(collection(db, "contacts"));
-
-    document.getElementById("totalProjects").textContent = demosSnap.size;
-    document.getElementById("messagesReceived").textContent = contactsSnap.size;
-    document.getElementById("activeClients").textContent = contactsSnap.size;
-  }
-
-  fetchStats();
-
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "login.html";
-    }
+  onSnapshot(collection(db, "demos"), (snapshot) => {
+    document.getElementById("totalProjects").textContent = snapshot.size;
   });
+
+  onSnapshot(collection(db, "contacts"), (snapshot) => {
+    document.getElementById("messagesReceived").textContent = snapshot.size;
+    document.getElementById("activeClients").textContent = snapshot.size;
+  });
+
+  // Calendar Reminders Firestore logic
+  const remindersList = document.getElementById("calendarRemindersList");
+  const remindersQuery = query(collection(db, "reminders"), orderBy("date", "asc"), limit(5));
+  onSnapshot(remindersQuery, (snapshot) => {
+    remindersList.innerHTML = "";
+    if (snapshot.empty) {
+      remindersList.innerHTML = "<li>No upcoming reminders</li>";
+      return;
+    }
+    snapshot.forEach((doc) => {
+      const reminder = doc.data();
+      const li = document.createElement("li");
+      const date = new Date(reminder.date).toLocaleDateString("en-IN", {
+        day: "numeric", month: "short", year: "numeric"
+      });
+      li.textContent = `${reminder.title} — ${date}`;
+      remindersList.appendChild(li);
+    });
+  });
+
+let currentAdmin = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = "admin-login.html";
+  } else {
+    currentAdmin = user.email;
+    // Fetch admin role from Firestore
+    const adminDoc = await getDoc(doc(db, "admins", currentAdmin));
+    const userRole = adminDoc.exists() ? adminDoc.data().role : "viewer";
+    // Store role globally
+    window.userRole = userRole;
+    // Optionally restrict access or hide certain cards
+    if (userRole !== "superadmin") {
+      const settingsCard = document.querySelector('a[href="settings.html"]');
+      if (settingsCard) settingsCard.style.display = "none";
+    }
+    // Log login activity
+    await addDoc(collection(db, "adminLogs"), {
+      action: "logged in",
+      admin: currentAdmin,
+      timestamp: new Date().toISOString()
+    });
+    const welcomeHeading = document.getElementById("adminWelcome");
+    if (userRole === "superadmin") {
+      welcomeHeading.innerHTML = `Welcome, Superadmin 👑`;
+    } else {
+      welcomeHeading.innerHTML = `Welcome, ${currentAdmin.split('@')[0]}`;
+    }
+  }
+});
 
   window.logout = function () {
     signOut(auth).then(() => {
-      window.location.href = "login.html";
+      window.location.href = "admin-login.html";
     });
   };
 
@@ -343,15 +420,127 @@
     }
   });
 
-  // Special redirection logic for edit homepage
-  document.querySelectorAll('.dashboard-card').forEach(card => {
-    if (card.querySelector('h3')?.innerText.includes("Edit Homepage")) {
-      card.addEventListener('click', function (e) {
-        e.preventDefault();
-        window.location.href = "edit-index.html";
-      });
+import { addDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const reminderForm = document.getElementById("reminderForm");
+reminderForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const title = document.getElementById("reminderTitle").value.trim();
+  const date = document.getElementById("reminderDate").value;
+
+  if (title && date) {
+    await addDoc(collection(db, "reminders"), {
+      title,
+      date,
+      createdAt: new Date().toISOString()
+    });
+    // Log the admin action with descriptive string
+    await addDoc(collection(db, "adminLogs"), {
+      action: `added reminder "${title}"`,
+      admin: currentAdmin,
+      timestamp: new Date().toISOString()
+    });
+    reminderForm.reset();
+  }
+});
+
+import { getStorage, ref, listAll, getMetadata } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-storage.js";
+
+const storage = getStorage(app);
+const demosFolderRef = ref(storage, 'demos');
+const storageUsageEl = document.getElementById("storageUsage");
+
+async function calculateTotalStorageUsed() {
+  let totalBytes = 0;
+  try {
+    const result = await listAll(demosFolderRef);
+    const metadataPromises = result.items.map(itemRef => getMetadata(itemRef));
+    const metadataList = await Promise.all(metadataPromises);
+    metadataList.forEach(meta => {
+      totalBytes += meta.size || 0;
+    });
+
+    const totalMB = (totalBytes / (1024 * 1024)).toFixed(2);
+    storageUsageEl.textContent = `${totalMB} MB`;
+  } catch (error) {
+    console.error("Error calculating storage:", error);
+    storageUsageEl.textContent = "Error";
+  }
+}
+  calculateTotalStorageUsed();
+
+  // Activity Feed Firestore logic
+  const activityFeed = document.getElementById("activityFeed");
+  const logsQuery = query(collection(db, "adminLogs"), orderBy("timestamp", "desc"), limit(5));
+
+  onSnapshot(logsQuery, (snapshot) => {
+    activityFeed.innerHTML = "";
+    if (snapshot.empty) {
+      activityFeed.innerHTML = "<p>No recent activity.</p>";
+      return;
     }
+
+    snapshot.forEach((doc) => {
+      const log = doc.data();
+      const logDate = new Date(log.timestamp);
+      const now = new Date();
+      const diffMs = now - logDate;
+      const diffMin = Math.round(diffMs / 60000);
+      const diffHr = Math.round(diffMin / 60);
+      const diffDay = Math.round(diffHr / 24);
+
+      let timeDisplay = "";
+      if (diffMin < 60) {
+        timeDisplay = `${diffMin} min ago`;
+      } else if (diffHr < 24) {
+        timeDisplay = `${diffHr} hr${diffHr > 1 ? "s" : ""} ago`;
+      } else {
+        timeDisplay = `${diffDay} day${diffDay > 1 ? "s" : ""} ago`;
+      }
+
+      const p = document.createElement("p");
+      p.innerHTML = `<strong>${log.admin}</strong> ${log.action} - <em>${timeDisplay}</em>`;
+      activityFeed.appendChild(p);
+    });
   });
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+
+const announcementEl = document.getElementById("announcementsContent");
+const saveBtn = document.getElementById("saveAnnouncementsBtn");
+const editBtn = document.getElementById("editAnnouncementsIcon");
+// db is already initialized in the above script
+const announcementsDocRef = doc(db, "admin", "announcements");
+
+// Fetch from Firestore on load
+getDoc(announcementsDocRef).then((docSnap) => {
+  if (docSnap.exists()) {
+    announcementEl.innerHTML = docSnap.data().content || "";
+  }
+});
+
+editBtn.addEventListener("click", () => {
+  announcementEl.contentEditable = true;
+  announcementEl.focus();
+  saveBtn.style.display = "inline-block";
+});
+
+// Save to Firestore
+saveBtn.addEventListener("click", async () => {
+  await setDoc(announcementsDocRef, {
+    content: announcementEl.innerHTML,
+    updatedAt: new Date().toISOString()
+  });
+  // Log the admin action for announcements update
+  await addDoc(collection(db, "adminLogs"), {
+    action: `updated announcements`,
+    admin: currentAdmin,
+    timestamp: new Date().toISOString()
+  });
+  alert("Announcements saved!");
+  announcementEl.contentEditable = false;
+  saveBtn.style.display = "none";
+});
+</script>
 </script>
 </body>
-</html>
+</html> 

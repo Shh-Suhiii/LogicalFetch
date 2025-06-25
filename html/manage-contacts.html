@@ -74,6 +74,7 @@
             margin: 0 0 0.75rem;
             color: #2b2b2b;
             font-size: 1.2rem;
+            display: inline-block;
         }
 
         .contact-card p {
@@ -84,6 +85,45 @@
 
         .contact-card small {
             color: #888;
+        }
+
+        .replied-badge {
+            display: inline-block;
+            background-color: #4a4aff;
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            margin-left: 0.75rem;
+            vertical-align: middle;
+            user-select: none;
+        }
+
+        .replied-toggle {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 1rem;
+            background-color: #f1f5ff;
+            border: 1px solid #4a4aff;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .replied-toggle.replied {
+            background-color: #4a4aff;
+            color: #fff;
+        }
+
+        .replied-toggle input[type="checkbox"] {
+            margin: 0;
+            cursor: pointer;
+            width: 16px;
+            height: 16px;
         }
 
         @media (max-width: 600px) {
@@ -97,6 +137,18 @@
         }
     </style>
 </head>
+    <!-- Firebase App (the core Firebase SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+    <!-- Firebase Firestore -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+    <!-- EmailJS -->
+    <script type="text/javascript" src="https://cdn.emailjs.com/dist/email.min.js"></script>
+    <script type="text/javascript">
+      (function() {
+        emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS public key
+      })();
+    </script>
+</head>
 
 <body>
     <header class="contact-header">
@@ -105,18 +157,34 @@
 
     <div style="text-align: center; margin-bottom: 2rem;">
         <a href="admin-dashboard.html" style="text-decoration: none;">
-            <button style="background-color: #4a4aff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;">
+            <button
+                style="background-color: #4a4aff; color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 6px; font-size: 1rem; cursor: pointer; transition: background-color 0.3s ease;">
                 &larr; Back to Dashboard
             </button>
         </a>
     </div>
 
     <main class="contact-list">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-            <input type="text" placeholder="Search contacts..." style="flex: 1; padding: 0.6rem 1rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; max-width: 60%;">
-            <span style="margin-left: 1rem; font-size: 0.95rem; color: #555;">Total Contacts: 2</span>
+        <div
+            style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem;">
+            <input type="text" placeholder="Search contacts..."
+                style="flex: 1; flex-shrink: 0; padding: 0.6rem 1rem; font-size: 1rem; border: 1px solid #ccc; border-radius: 6px; max-width: 60%;">
+            <button id="exportCsvBtn"
+                style="flex-shrink: 0; margin-left: 1rem; padding: 0.6rem 1rem; font-size: 0.95rem; background-color: #28a745; color: white; border: none; border-radius: 6px; cursor: pointer;">Export
+                CSV</button>
+            <div style="width: 100%; display: flex; align-items: center; gap: 0.4rem; margin-top: 1rem;">
+                <label for="selectAllCheckbox" style="font-size: 0.95rem; color: #333; display: flex; align-items: center; gap: 0.4rem;">
+                    <input type="checkbox" id="selectAllCheckbox" style="transform: scale(1.2); cursor: pointer;">
+                    <span>Select All</span>
+                </label>
+            </div>
+            <button id="deleteSelectedBtn"
+                style="display: none; flex-shrink: 0; margin-left: 1rem; margin-top: 0.5rem; padding: 0.6rem 1rem; font-size: 0.95rem; background-color: #dc3545; color: white; border: none; border-radius: 6px; cursor: pointer;">Delete
+                Selected</button>
+            <span style="flex-shrink: 0; margin-left: 1rem; font-size: 0.95rem; color: #555;">Total Contacts: 2</span>
         </div>
-        <div style="margin-bottom: 2rem; background-color: #f0f8ff; padding: 1rem 1.5rem; border-radius: 10px; border-left: 5px solid #4a4aff;">
+        <div
+            style="margin-bottom: 2rem; background-color: #f0f8ff; padding: 1rem 1.5rem; border-radius: 10px; border-left: 5px solid #4a4aff;">
             <h4 style="margin-top: 0; color: #2c3e50;">Contact Stats Overview</h4>
             <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8; color: #333;">
                 <li>Total Contacts: 3</li>
@@ -124,41 +192,359 @@
                 <li>Pending Responses: 2</li>
             </ul>
         </div>
-        <!-- Demo entry -->
-        <div class="contact-card">
-            <h4>John Doe</h4>
-            <p><strong>Email:</strong> john@example.com</p>
-            <p><strong>Message:</strong> I’d like to know more about your services.</p>
-            <small>Submitted on: 2025-06-12</small>
-            <button class="delete-btn" title="Delete">&times;</button>
-        </div>
-        <div class="contact-card">
-            <h4>Jane Smith</h4>
-            <p><strong>Email:</strong> jane@example.com</p>
-            <p><strong>Message:</strong> Please contact me regarding a demo session.</p>
-            <small>Submitted on: 2025-06-11</small>
-            <button class="delete-btn" title="Delete">&times;</button>
-        </div>
+
         <!-- Info Tip -->
-        <div style="background-color: #e9f2ff; border-left: 4px solid #4a4aff; padding: 1rem 1.25rem; border-radius: 8px; color: #333;">
+        <div
+            style="background-color: #e9f2ff; border-left: 4px solid #4a4aff; padding: 1rem 1.25rem; border-radius: 8px; color: #333;">
             Tip: You can delete contact requests by hovering over a card and clicking the × icon.
         </div>
-
-        <!-- New Section: Recently Added Contact -->
-        <div style="background: #fff7e6; border-left: 5px solid #ffaa00; padding: 1.5rem 2rem; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-top: 2rem;">
-            <h4 style="margin-top: 0; color: #d35400;">New Contact Highlight</h4>
-            <p><strong>Email:</strong> newuser@demo.com</p>
-            <p><strong>Message:</strong> I just joined and would love to connect!</p>
-            <small>Submitted on: 2025-06-13</small>
-        </div>
-
-        <!-- Empty State (optional, can be toggled dynamically with JS later) -->
-        <!--
-        <div style="text-align: center; padding: 3rem 1rem; color: #777; font-style: italic;">
-            No contact requests found.
-        </div>
-        -->
     </main>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc, updateDoc, onSnapshot, arrayUnion } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA-BlIka2Omcmxmt2NDVTpl3dlBX3_4pDk",
+            authDomain: "logicalfetch-138a8.firebaseapp.com",
+            projectId: "logicalfetch-138a8",
+            storageBucket: "logicalfetch-138a8.firebasestorage.app",
+            messagingSenderId: "352479441148",
+            appId: "1:352479441148:web:1c57797bdadb3fe906a779",
+            measurementId: "G-Z66R8XS5SW"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        const contactList = document.querySelector('.contact-list');
+        const totalSpan = Array.from(document.querySelectorAll('span')).find(span => span.textContent.includes('Total Contacts'));
+
+        // --- Enhanced loadContacts with search and live stats ---
+        // Helper to parse date string (expected format: YYYY-MM-DD or ISO)
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            const d = new Date(dateStr);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        // Find search input and stats overview section
+        const searchInput = document.querySelector('input[type="text"][placeholder^="Search"]');
+        const statsBox = Array.from(document.querySelectorAll('div')).find(div =>
+            div.innerHTML && div.innerHTML.includes('Contact Stats Overview')
+        );
+
+        // Store contacts in memory for filtering/stats
+        let allContacts = [];
+
+        function loadContacts() {
+            // Remove existing contact cards
+            document.querySelectorAll('.contact-card').forEach(card => card.remove());
+            allContacts = [];
+
+            onSnapshot(collection(db, 'contacts'), (querySnapshot) => {
+                allContacts = [];
+                querySnapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    allContacts.push({
+                        id: docSnap.id,
+                        replied: data.replied || false,
+                        ...data
+                    });
+                });
+                renderContactsAndStats();
+            });
+        }
+
+        // Filters and renders contact cards and stats
+        function renderContactsAndStats() {
+            // Helper function to convert date to human-readable time ago string
+            function timeAgo(dateStr) {
+                if (!dateStr) return 'Unknown';
+                const date = new Date(dateStr);
+                if (isNaN(date.getTime())) return 'Unknown';
+                const now = new Date();
+                const seconds = Math.floor((now - date) / 1000);
+                if (seconds < 0) return 'Just now';
+
+                const intervals = [
+                    { label: 'year', seconds: 31536000 },
+                    { label: 'month', seconds: 2592000 },
+                    { label: 'week', seconds: 604800 },
+                    { label: 'day', seconds: 86400 },
+                    { label: 'hour', seconds: 3600 },
+                    { label: 'minute', seconds: 60 },
+                    { label: 'second', seconds: 1 }
+                ];
+
+                for (const interval of intervals) {
+                    const count = Math.floor(seconds / interval.seconds);
+                    if (count >= 1) {
+                        return count === 1 ? `1 ${interval.label} ago` : `${count} ${interval.label}s ago`;
+                    }
+                }
+                return 'Just now';
+            }
+
+            // Remove existing cards
+            document.querySelectorAll('.contact-card').forEach(card => card.remove());
+            // Get filter text
+            const filter = (searchInput && searchInput.value) ? searchInput.value.trim().toLowerCase() : '';
+            // Filter contacts by name, email, or message
+            const filtered = allContacts.filter(c =>
+                !filter ||
+                (c.name && c.name.toLowerCase().includes(filter)) ||
+                (c.email && c.email.toLowerCase().includes(filter)) ||
+                (c.message && c.message.toLowerCase().includes(filter))
+            );
+
+            // Render filtered contact cards
+            filtered.forEach(data => {
+                const card = document.createElement('div');
+                card.className = 'contact-card';
+                // Enhanced badges for New and Urgent
+                const isNew = (() => {
+                    const d = parseDate(data.date);
+                    if (!d) return false;
+                    const now = new Date();
+                    const diffDays = Math.floor((now - d) / (1000 * 60 * 60 * 24));
+                    return diffDays <= 2;
+                })();
+                const isUrgent = data.message && data.message.length >= 150;
+                card.innerHTML = `
+            <input type="checkbox" class="select-contact" data-id="${data.id}" style="position: absolute; top: 1rem; left: 1rem;" />
+            <h4>${data.name || 'Unnamed'}</h4>
+            ${isNew ? '<span class="replied-badge" style="background-color:#ff9800;">New</span>' : ''}
+            ${isUrgent ? '<span class="replied-badge" style="background-color:#e91e63;">Urgent</span>' : ''}
+            ${data.replied ? '<span class="replied-badge">Replied</span>' : ''}
+            <p><strong>Email:</strong> ${data.email || 'Not provided'}</p>
+            <p><strong>Message:</strong> ${data.message || ''}</p>
+            <small>Submitted ${timeAgo(data.date)}</small>
+            ${
+              data.replyTimestamp
+                ? `<p class="text-xs text-gray-400">Replied on ${
+                    data.replyTimestamp.seconds
+                      ? new Date(data.replyTimestamp.seconds * 1000).toLocaleString()
+                      : new Date(data.replyTimestamp).toLocaleString()
+                  }</p>`
+                : ""
+            }
+            <div>
+              <label class="replied-toggle${data.replied ? ' replied' : ''}">
+                <input type="checkbox" data-id="${data.id}" ${data.replied ? 'checked' : ''}>
+                Mark as Replied
+              </label>
+              <div style="margin-top: 0.8rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                  <a href="mailto:${data.email}?subject=Thank You for Contacting LogicalFetch&body=Thank you for reaching out. We’ll contact you soon."
+                     style="background-color: #4a4aff; color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; text-decoration: none;">Send Thank You</a>
+                  <a href="mailto:${data.email}?subject=Regarding Your Query&body=We’ve received your message and will get back shortly."
+                     style="background-color: #17a2b8; color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.8rem; text-decoration: none;">Contact Soon</a>
+              </div>
+              <div style="margin-top: 1rem;">
+                <textarea placeholder="Type custom reply..." class="custom-reply-text" style="width: 100%; padding: 0.5rem; font-size: 0.9rem; border: 1px solid #ccc; border-radius: 6px;"></textarea>
+                <button class="send-custom-reply" data-id="${data.id}" data-email="${data.email}" style="margin-top: 0.4rem; background-color: #4a4aff; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">Send Custom Reply</button>
+                ${data.replySentAt ? `<small style="display:block; margin-top:0.3rem; color:#888;">Last reply: ${timeAgo(data.replySentAt)}</small>` : ''}
+              </div>
+            </div>
+            ${data.replies && data.replies.length ? `
+              <details style="margin-top: 0.8rem;">
+                <summary style="cursor: pointer; color: #4a4aff;">View Reply History (${data.replies.length})</summary>
+                <ul style="padding-left: 1rem; margin-top: 0.5rem;">
+                  ${data.replies.map(r => `
+                    <li style="margin-bottom: 0.4rem;">
+                      <div style="font-size: 0.9rem; color: #333;">${r.message}</div>
+                      <small style="color: #888;">${new Date(r.date).toLocaleString()}</small>
+                    </li>
+                  `).join('')}
+                </ul>
+              </details>
+            ` : ''}
+            <button class="delete-btn" title="Delete" data-id="${data.id}">&times;</button>
+          `;
+                contactList.appendChild(card);
+            });
+
+            // --- Live Stats Calculation ---
+            // Total contacts (all)
+            const totalContacts = allContacts.length;
+            // New this week (submitted within last 7 days)
+            const now = new Date();
+            const weekAgo = new Date(now);
+            weekAgo.setDate(now.getDate() - 7);
+            let newThisWeek = 0, pendingResponses = 0;
+            allContacts.forEach(c => {
+                const d = parseDate(c.date);
+                if (d && d >= weekAgo) newThisWeek++;
+                if (!c.message || c.message.trim() === '') pendingResponses++;
+            });
+            // For filtered contacts, count pending responses in filtered
+            const filteredPending = filtered.filter(c => !c.message || c.message.trim() === '').length;
+
+            // Update top right "Total Contacts"
+            if (totalSpan) {
+                totalSpan.textContent = `Total Contacts: ${filtered.length}`;
+            }
+            // Update stats overview box
+            if (statsBox) {
+                statsBox.innerHTML = `
+            <h4 style="margin-top: 0; color: #2c3e50;">Contact Stats Overview</h4>
+            <ul style="margin: 0; padding-left: 1.2rem; line-height: 1.8; color: #333;">
+              <li>Total Contacts: ${totalContacts}</li>
+              <li>New This Week: ${newThisWeek}</li>
+              <li>Pending Responses: ${pendingResponses}</li>
+            </ul>
+          `;
+            }
+            // --- Add EmailJS custom reply listeners after rendering cards ---
+            document.querySelectorAll(".send-custom-reply").forEach(btn => {
+              btn.addEventListener("click", async () => {
+                const email = btn.getAttribute("data-email");
+                const id = btn.getAttribute("data-id");
+                const message = btn.previousElementSibling.value.trim();
+                if (!message) return alert("Please enter a reply message.");
+
+                try {
+                  await emailjs.send("YOUR_SERVICE_ID", "YOUR_TEMPLATE_ID", {
+                    to_email: email,
+                    message: message
+                  });
+
+                  // Firestore update for reply timestamp, message, and reply history
+                  const contactRef = doc(db, "contacts", id);
+                  await updateDoc(contactRef, {
+                    replyTimestamp: new Date(),
+                    replyMessage: message,
+                    replySentAt: new Date().toISOString(),
+                    replies: arrayUnion({
+                      message: message,
+                      date: new Date().toISOString()
+                    })
+                  });
+
+                  alert("Reply sent!");
+                  // Optionally, re-render to show updated timestamp
+                  renderContactsAndStats();
+                } catch (err) {
+                  console.error("EmailJS Error:", err);
+                  alert("Failed to send reply.");
+                }
+              });
+            });
+        }
+
+        contactList.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('delete-btn')) {
+                const docId = e.target.getAttribute('data-id');
+                try {
+                    await deleteDoc(doc(db, 'contacts', docId));
+                    // Remove from allContacts and re-render
+                    allContacts = allContacts.filter(c => c.id !== docId);
+                    renderContactsAndStats();
+                } catch (error) {
+                    console.error('Error deleting contact:', error);
+                }
+            }
+        });
+
+        contactList.addEventListener('change', async (e) => {
+            if (e.target.matches('.replied-toggle input[type="checkbox"]')) {
+                const checkbox = e.target;
+                const docId = checkbox.getAttribute('data-id');
+                const newRepliedStatus = checkbox.checked;
+                try {
+                    await updateDoc(doc(db, 'contacts', docId), { replied: newRepliedStatus });
+                    // Update local data and re-render
+                    const contact = allContacts.find(c => c.id === docId);
+                    if (contact) {
+                        contact.replied = newRepliedStatus;
+                    }
+                    renderContactsAndStats();
+                } catch (error) {
+                    console.error('Error updating replied status:', error);
+                }
+            }
+        });
+
+        // --- Search filter event ---
+        if (searchInput) {
+            searchInput.addEventListener('keyup', () => {
+                renderContactsAndStats();
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', loadContacts);
+
+        // --- Export CSV functionality ---
+        function downloadCSV(data) {
+            const csvHeader = ["Name", "Email", "Phone", "Institute", "Message", "Date", "Replied"];
+            const csvRows = [csvHeader.join(",")];
+            data.forEach(c => {
+                const row = [
+                    `"${c.name || ''}"`,
+                    `"${c.email || ''}"`,
+                    `"${c.phone || ''}"`,
+                    `"${c.institute || ''}"`,
+                    `"${c.message || ''}"`,
+                    `"${c.date || ''}"`,
+                    c.replied ? "Yes" : "No"
+                ];
+                csvRows.push(row.join(","));
+            });
+
+            const blob = new Blob([csvRows.join("\n")], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'contacts_export.csv';
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        const exportCsvBtn = document.getElementById("exportCsvBtn");
+        if (exportCsvBtn) {
+            exportCsvBtn.addEventListener("click", () => {
+                downloadCSV(allContacts);
+            });
+        }
+        // --- Bulk selection and deletion controls ---
+        const selectAllCheckbox = document.getElementById("selectAllCheckbox");
+        const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+
+        function updateDeleteSelectedVisibility() {
+            const anySelected = document.querySelectorAll(".select-contact:checked").length > 0;
+            deleteSelectedBtn.style.display = anySelected ? "inline-block" : "none";
+        }
+
+        document.addEventListener("change", (e) => {
+            if (e.target.classList.contains("select-contact") || e.target.id === "selectAllCheckbox") {
+                updateDeleteSelectedVisibility();
+            }
+        });
+
+        window.addEventListener("DOMContentLoaded", () => {
+            updateDeleteSelectedVisibility();
+        });
+
+        // Select All checkbox toggles all contact checkboxes
+        selectAllCheckbox?.addEventListener("change", () => {
+            document.querySelectorAll(".select-contact").forEach(cb => {
+                cb.checked = selectAllCheckbox.checked;
+            });
+        });
+
+        // Delete selected contacts in bulk
+        deleteSelectedBtn?.addEventListener("click", async () => {
+            const selected = Array.from(document.querySelectorAll(".select-contact:checked"));
+            if (selected.length === 0) return alert("No contacts selected.");
+            if (!confirm(`Delete ${selected.length} selected contact(s)?`)) return;
+
+            for (const cb of selected) {
+                const id = cb.getAttribute("data-id");
+                await deleteDoc(doc(db, "contacts", id));
+                allContacts = allContacts.filter(c => c.id !== id);
+            }
+            renderContactsAndStats();
+        });
+    </script>
 </body>
 
 </html>
