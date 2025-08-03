@@ -105,9 +105,14 @@
 
         if (!title || !file) return alert('Please enter title and choose an image.');
 
+        console.log("Uploading demo:", { title, description, file });
+
         const fileRef = ref(storage, `demoImages/${Date.now()}_${file.name}`);
+        console.log("Uploading to storage...");
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
+
+        console.log("File uploaded to:", url);
 
         await addDoc(collection(db, "demos"), {
           title,
@@ -120,7 +125,7 @@
         loadDemos();
       } catch (error) {
         console.error("Upload failed:", error);
-        alert("Error uploading demo. See console for details.");
+        alert("Error uploading demo. See console for details: " + error.message);
       }
     });
 
